@@ -50,13 +50,13 @@ hourly_data = {
         start=pd.to_datetime(hourly.Time(), unit="s", utc=True),
         end=pd.to_datetime(hourly.TimeEnd(), unit="s", utc=True),
         freq=pd.Timedelta(seconds=hourly.Interval()),
-        inclusive="left",
+        inclusive="left"
     ),
     "shortwave_radiation": hourly_shortwave,
     "direct_radiation": hourly_direct,
     "diffuse_radiation": hourly_diffuse,
     "direct_normal_irradiance": hourly_dni,
-    "global_tilted_irradiance": hourly_gti,
+    "global_tilted_irradiance": hourly_gti
 }
 
 hourly_dataframe = pd.DataFrame(data=hourly_data)
