@@ -3,14 +3,9 @@ __pycache__/
 *.py[codz]
 *$py.class
 data/
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 
-notebooks/
 
->>>>>>> 5ef66f9 (ajouter les notebooks a gitignore)
+
 clean_data_eolien/
 =======
 notebooks/
