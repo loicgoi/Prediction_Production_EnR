@@ -22,7 +22,7 @@ params = {
 # Requête Open-Meteo
 responses = openmeteo.weather_api(url, params=params)
 
-# Traitement des données pour la première localisation
+# Traitement des données pour la première localisation géographique
 response = responses[0]
 print(f"Coordinates: {response.Latitude()}°N {response.Longitude()}°E")
 print(f"Elevation: {response.Elevation()} m asl")
