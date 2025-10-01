@@ -3,7 +3,12 @@ __pycache__/
 *.py[codz]
 *$py.class
 data/
+<<<<<<< HEAD
 clean_data_eolien/
+=======
+notebooks/
+
+>>>>>>> cb3b209 (exploration_solaire)
 # C extensions
 *.so
 
