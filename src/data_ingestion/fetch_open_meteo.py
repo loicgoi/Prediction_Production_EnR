@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 # soleil ######
 import openmeteo_requests
+=======
+#######-solaire######
+import requests
+>>>>>>> aafd19b (data_acquisition_solaire_fini)
 import pandas as pd
 import requests_cache
 from retry_requests import retry
@@ -16,6 +21,7 @@ openmeteo = openmeteo_requests.Client(session=retry_session)
 # Paramètres pour le solaire
 url = "https://historical-forecast-api.open-meteo.com/v1/forecast"
 params = {
+<<<<<<< HEAD
     "latitude": 43.6109,
     "longitude": 3.8763,
     "start_date": "2025-09-14",
@@ -30,6 +36,7 @@ params = {
 # Requête Open-Meteo
 responses = openmeteo.weather_api(url, params=params)
 
+<<<<<<< HEAD
 # Traitement des données pour la première localisation
 response = responses[0]
 print(f"Coordinates: {response.Latitude()}°N {response.Longitude()}°E")
@@ -61,3 +68,9 @@ hourly_data = {
 
 hourly_dataframe = pd.DataFrame(data=hourly_data)
 print("\nHourly solar data\n", hourly_dataframe)
+=======
+# Transformation en DataFrame
+df = pd.DataFrame(data["daily"])
+print(df.head())
+#############------#############
+>>>>>>> aafd19b (data_acquisition_solaire_fini)
