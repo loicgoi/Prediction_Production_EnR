@@ -5,7 +5,7 @@ import requests_cache
 from retry_requests import retry
 
 # Setup Open-Meteo client avec cache et retry
-cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
+cache_session = requests_cache.CachedSession(".cache", expire_after=3600)
 retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
 openmeteo = openmeteo_requests.Client(session=retry_session)
 
@@ -16,7 +16,7 @@ params = {
     "longitude": 3.8763,
     "start_date": "2025-09-14",
     "end_date": "2025-09-28",
-    "hourly": "shortwave_radiation,direct_radiation,diffuse_radiation,direct_normal_irradiance,global_tilted_irradiance"
+    "hourly": "shortwave_radiation,direct_radiation,diffuse_radiation,direct_normal_irradiance,global_tilted_irradiance",
 }
 
 # Requête Open-Meteo
@@ -42,13 +42,13 @@ hourly_data = {
         start=pd.to_datetime(hourly.Time(), unit="s", utc=True),
         end=pd.to_datetime(hourly.TimeEnd(), unit="s", utc=True),
         freq=pd.Timedelta(seconds=hourly.Interval()),
-        inclusive="left"
+        inclusive="left",
     ),
     "shortwave_radiation": hourly_shortwave,
     "direct_radiation": hourly_direct,
     "diffuse_radiation": hourly_diffuse,
     "direct_normal_irradiance": hourly_dni,
-    "global_tilted_irradiance": hourly_gti
+    "global_tilted_irradiance": hourly_gti,
 }
 
 hourly_dataframe = pd.DataFrame(data=hourly_data)
