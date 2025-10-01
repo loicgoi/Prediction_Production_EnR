@@ -1,5 +1,6 @@
 # soleil ######
 import requests
+import pandas as pd
 
 # Setup Open-Meteo client avec cache et retry
 cache_session = requests_cache.CachedSession(".cache", expire_after=3600)
