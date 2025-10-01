@@ -1,6 +1,8 @@
 # soleil ######
 import requests
+import pandas as pd
 
+# URL MP Open-Meteo
 url = "https://api.open-meteo.com/v1/forecast"
 params = {
     "latitude": 43.6119,
@@ -9,5 +11,10 @@ params = {
     "timezone": "Europe/Paris"
 }
 
+# Récupération des données
 response = requests.get(url, params=params)
-print(response.json())
+data = response.json()
+
+# Transformation en DataFrame
+df = pd.DataFrame(data["daily"])
+print(df.head())
