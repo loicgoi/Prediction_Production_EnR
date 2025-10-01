@@ -1,5 +1,6 @@
 # soleil ######
 import requests
+import pandas as pd
 
 # Setup Open-Meteo client avec cache et retry
 
