@@ -40,17 +40,16 @@ url = "https://archive-api.open-meteo.com/v1/archive"
 params = {
 	"latitude": 43.6109,
 	"longitude": 3.8763,
-	"start_date": "2024-01-01",
+	"start_date": "2016-09-01",
 	"end_date": "2025-09-30",
 	"daily": [
         "wind_speed_10m_max", 
         "wind_gusts_10m_max", 
-        "wind_direction_10m_dominant",
-        "wind_gusts_10m_mean", 
-        "temperature_2m_mean", 
+        "wind_direction_10m_dominant", 
         "cloud_cover_mean", 
-        "surface_pressure_mean"],
-    "timezone": "Europe/Paris",
+        "surface_pressure_mean", 
+        "temperature_2m_mean"],
+        "timezone": "Europe/Paris",
 }
 
 # Récuperation des données
