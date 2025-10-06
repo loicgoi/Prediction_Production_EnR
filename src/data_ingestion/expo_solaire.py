@@ -7,15 +7,15 @@ import pandas as pd
 def load_and_clean_solar_data(filepath: str) -> pd.DataFrame:
     """
     Charge et prépare les données solaires historiques.
-    
+
     Étapes :
     1. Lecture du fichier CSV.
     2. Renommage de la colonne 'time' en 'date'.
     3. Conversion en datetime des colonnes date, sunrise et sunset.
-    
+
     Args:
         filepath (str): chemin du fichier CSV contenant les données brutes.
-    
+
     Returns:
         pd.DataFrame: DataFrame nettoyé et prêt à l'analyse.
     """
@@ -23,14 +23,15 @@ def load_and_clean_solar_data(filepath: str) -> pd.DataFrame:
     df = pd.read_csv(filepath)
 
     # Renommer 'time' to  'date' et convertir en datetime
-    df = df.rename(columns={'time': 'date'})
-    df['date'] = pd.to_datetime(df['date'])
+    df = df.rename(columns={"time": "date"})
+    df["date"] = pd.to_datetime(df["date"])
 
     # Convertir sunrise et sunset en datetime
-    df['sunrise'] = pd.to_datetime(df['sunrise'])
-    df['sunset'] = pd.to_datetime(df['sunset'])
-    
+    df["sunrise"] = pd.to_datetime(df["sunrise"])
+    df["sunset"] = pd.to_datetime(df["sunset"])
+
     return df
+
 
 if __name__ == "__main__":
     # Détection automatique du chemin racine du projet
@@ -42,13 +43,14 @@ if __name__ == "__main__":
     # Chargement des données
     df_historical_solaire = load_and_clean_solar_data(filepath)
     print("\nAperçu des 5 premières lignes :")
-    
+
 print(df_historical_solaire.head())
 ### verification des types de données ###
 print("\nInfos du DataFrame :")
 print(df_historical_solaire.info())
 
 #######__________________Vérification doublons + drop_____________________###########
+
 
 def check_and_remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -65,8 +67,10 @@ def check_and_remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
         print("Aucun doublon trouvé. Rien à faire.")
     return df
 
+
 # Exemple d'utilisation
 df_historical_solaire = check_and_remove_duplicates(df_historical_solaire)
+
 
 ##########___________________verification valeurs manquantes___________________________#########
 def check_missing_values(df):
@@ -76,15 +80,18 @@ def check_missing_values(df):
     """
     missing = df.isnull().sum()
     total_missing = missing.sum()
-    
+
     if total_missing == 0:
         print("Aucune valeur manquante dans le DataFrame.")
     else:
         print(f"{total_missing} valeurs manquantes trouvées :")
         print(missing[missing > 0])
     return df
+
+
 # Exemple d'utilisation
 df_historical_solaire = check_missing_values(df_historical_solaire)
+
 
 #########______________traitement des valeurs manquantes avec interpolation_______________#########
 def fill_missing_values(df: pd.DataFrame) -> pd.DataFrame:
@@ -96,18 +103,20 @@ def fill_missing_values(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
 
     # Vérifier la colonne 'date'
-    if 'date' not in df.columns:
-        raise ValueError("La colonne 'date' est requise pour l'interpolation temporelle.")
-    
+    if "date" not in df.columns:
+        raise ValueError(
+            "La colonne 'date' est requise pour l'interpolation temporelle."
+        )
+
     # Définir 'date' comme index temporel
-    if not pd.api.types.is_datetime64_any_dtype(df['date']):
-        df['date'] = pd.to_datetime(df['date'])
-    df = df.set_index('date')
+    if not pd.api.types.is_datetime64_any_dtype(df["date"]):
+        df["date"] = pd.to_datetime(df["date"])
+    df = df.set_index("date")
     # Sélectionner uniquement les colonnes numériques
-    numeric_cols = df.select_dtypes(include=['float64', 'int64']).columns
+    numeric_cols = df.select_dtypes(include=["float64", "int64"]).columns
 
     # Interpolation temporelle sur les colonnes numériques
-    df[numeric_cols] = df[numeric_cols].interpolate(method='time')
+    df[numeric_cols] = df[numeric_cols].interpolate(method="time")
 
     # Vérification des valeurs manquantes
     remaining_missing = df[numeric_cols].isnull().sum().sum()
@@ -115,15 +124,18 @@ def fill_missing_values(df: pd.DataFrame) -> pd.DataFrame:
         print("Toutes les valeurs manquantes ont été interpolées avec succès.")
     else:
         print(f"Il reste {remaining_missing} valeurs manquantes après interpolation.")
-    
+
     # Réinitialiser l'index
     df.reset_index(inplace=True)
-    
+
     return df
-#exemple d'utilisation : 
+
+
+# exemple d'utilisation :
 df_historical_solaire = fill_missing_values(df_historical_solaire)
 
 ##########________________________verification valeurs aberrantes ________________________________#########
+
 
 def check_solar_data(df):
     """
@@ -142,9 +154,9 @@ def check_solar_data(df):
     """
     # 1️ Min/max physiques
     physical_limits = {
-        'temperature_2m_max': (-20, 50),
-        'temperature_2m_min': (-30, 40),
-        'shortwave_radiation_sum': (0, 35),  # extremes possibles a regler
+        "temperature_2m_max": (-20, 50),
+        "temperature_2m_min": (-30, 40),
+        "shortwave_radiation_sum": (0, 35),  # extremes possibles a regler
         # 'production_solaire' si on a  une colonne réelle : (0, 150)
     }
 
@@ -158,16 +170,16 @@ def check_solar_data(df):
                 print(f"{col} OK.")
 
     # 2️ Cohérence entre colonnes
-    if 'sunshine_duration' in df.columns and 'daylight_duration' in df.columns:
-        invalid_sunshine = df[df['sunshine_duration'] > df['daylight_duration']]
+    if "sunshine_duration" in df.columns and "daylight_duration" in df.columns:
+        invalid_sunshine = df[df["sunshine_duration"] > df["daylight_duration"]]
         if not invalid_sunshine.empty:
             print("Durée d'ensoleillement > durée du jour détectée :")
-            print(invalid_sunshine[['sunshine_duration', 'daylight_duration']])
+            print(invalid_sunshine[["sunshine_duration", "daylight_duration"]])
         else:
             print("Durée d'ensoleillement OK.")
 
     # 3️ Pourcentages
-    for col in ['cloud_cover_mean', 'relative_humidity_2m_mean']:
+    for col in ["cloud_cover_mean", "relative_humidity_2m_mean"]:
         if col in df.columns:
             invalid = df[(df[col] < 0) | (df[col] > 100)]
             if not invalid.empty:
@@ -177,7 +189,7 @@ def check_solar_data(df):
                 print(f"{col} OK.")
 
     # 4️ Précipitations et vent
-    for col in ['precipitation_sum', 'wind_speed_10m_max']:
+    for col in ["precipitation_sum", "wind_speed_10m_max"]:
         if col in df.columns:
             invalid = df[df[col] < 0]
             if not invalid.empty:
@@ -185,7 +197,11 @@ def check_solar_data(df):
                 print(invalid[[col]])
             else:
                 print(f"{col} OK.")
+
+
 check_solar_data(df_historical_solaire)
+
+
 ##########_________Nettoyage / transformation des données________########
 def convert_units(df):
     """
@@ -206,32 +222,41 @@ def convert_units(df):
     df["daylight_duration_h"] = df["daylight_duration"] / 3600
 
     # Conversion de l'irradiation solaire de MJ/m² en kWh/m²
-# 1 MJ = 1 000 000 J
-# 1 kWh = 3 600 000 J
-# Donc 1 MJ = 1 / 3.6 kWh ≈ 0.27778 kWh
-    df["shortwave_radiation_sum_kWhm2"] = (
-        df["shortwave_radiation_sum"] * 0.27778
-    )
+    # 1 MJ = 1 000 000 J
+    # 1 kWh = 3 600 000 J
+    # Donc 1 MJ = 1 / 3.6 kWh ≈ 0.27778 kWh
+    df["shortwave_radiation_sum_kWhm2"] = df["shortwave_radiation_sum"] * 0.27778
 
     return df
+
+
 df_historical_solaire = convert_units(df_historical_solaire)
 # Après nettoyage
 df_historical_solaire = convert_units(df_historical_solaire)
 
 # Vérification rapide
-print(df_historical_solaire[[
-    "sunshine_duration", "sunshine_duration_h",
-    "daylight_duration", "daylight_duration_h",
-    "shortwave_radiation_sum", "shortwave_radiation_sum_kWhm2"
-]].head()) 
+print(
+    df_historical_solaire[
+        [
+            "sunshine_duration",
+            "sunshine_duration_h",
+            "daylight_duration",
+            "daylight_duration_h",
+            "shortwave_radiation_sum",
+            "shortwave_radiation_sum_kWhm2",
+        ]
+    ].head()
+)
+
+
 ###########________ Selection des colonnes pertinentes________#########
 def select_relevant_columns(df: pd.DataFrame) -> pd.DataFrame:
     """
     Sélectionne uniquement les colonnes utiles pour l'analyse et l'entraînement futur.
-    
+
     Args:
         df (pd.DataFrame): DataFrame complet après nettoyage et conversion des unités
-    
+
     Returns:
         pd.DataFrame: DataFrame réduit aux colonnes pertinentes
     """
@@ -246,21 +271,23 @@ def select_relevant_columns(df: pd.DataFrame) -> pd.DataFrame:
         "cloud_cover_mean ",
         "relative_humidity_2m_mean",
         "precipitation_sum ",
-        "wind_speed_10m_max"
+        "wind_speed_10m_max",
     ]
 
     # Garder uniquement les colonnes disponibles dans df
     df_selected = df[[col for col in relevant_cols if col in df.columns]]
-    
+
     print("\nColonnes retenues pour l'entraînement :")
     print(df_selected.columns.tolist())
-    
+
     return df_selected
+
 
 # Exemple d'utilisation
 df_historical_solaire = select_relevant_columns(df_historical_solaire)
 print(df_historical_solaire.head())
 ############_____________________________________###################
+<<<<<<< HEAD
 import os
 import pandas as pd
 
@@ -523,3 +550,5 @@ def select_relevant_columns(df: pd.DataFrame) -> pd.DataFrame:
 df_historical_solaire = select_relevant_columns(df_historical_solaire)
 print(df_historical_solaire.head())
 ############_____________________________________###################
+=======
+>>>>>>> 9d0d371 (feat: ajout nettoyage et prétraitement données solaires)
