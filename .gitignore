@@ -3,7 +3,10 @@ __pycache__/
 *.py[codz]
 *$py.class
 data/
+
 notebooks/
+
+clean_data_eolien/
 
 # C extensions
 *.so

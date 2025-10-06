@@ -4,7 +4,28 @@ import pandas as pd
 
 def get_hubeau_data(code_station: str, start_date: str, end_date: str):
     """
-    Récupère les données hydrométriques Hubeau (débit, etc.) pour une station donnée.
+    Récupère les données hydrométriques (débit moyen journalier) à partir de l'API
+    Hubeau pour une station hydrométrique donnée et une période spécifiée.
+
+    Args:
+        code_station (str): Code de la station hydrométrique (ex. 'Y321002101').
+        start_date (str): Date de début au format 'YYYY-MM-DD'.
+        end_date (str): Date de fin au format 'YYYY-MM-DD'.
+
+    Returns:
+        pd.DataFrame: Tableau contenant les observations hydrométriques issues de l'API,
+        avec notamment :
+            - code_station : identifiant de la station
+            - date_obs_elab : date de l'observation
+            - result_obs_elab : valeur mesurée (ex. débit en m³/s)
+            - autres colonnes descriptives fournies par l'API
+
+    Raises:
+        requests.HTTPError: Si la requête à l'API échoue.
+
+    Exemple:
+        >>> df = get_hubeau_data("Y321002101", "2024-01-01", "2024-12-31")
+        >>> df.head()
     """
     url = "https://hubeau.eaufrance.fr/api/v2/hydrometrie/obs_elab"
     params = {
@@ -19,18 +40,4 @@ def get_hubeau_data(code_station: str, start_date: str, end_date: str):
     response.raise_for_status()
     data = response.json()
 
-    df = pd.DataFrame(data.get("data", []))
-
-    return df
-
-
-df = get_hubeau_data(
-    code_station="Y321002101",
-    start_date="2024-01-01",
-    end_date="2025-09-30",
-)
-
-# Sauvegarde dans un CSV
-df.to_csv("data/raw/data_hubeau.csv", index=True)
-
-print(df)
+    return pd.DataFrame(data.get("data", []))
