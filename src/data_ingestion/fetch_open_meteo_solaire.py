@@ -172,12 +172,14 @@ print("Historique solaire sauvegardé en CSV.")
 #     print(df_forecast.head()) 
 #     print("\nAperçu de l'historique solaire :") 
 #     print(df_history.head())
-=======
+
 import requests
 import pandas as pd
 
 
-def get_solar_forecast(latitude: float, longitude: float) -> pd.DataFrame:
+def get_solar_forecast(
+    latitude: float, longitude: float, start_date: str, end_date: str
+) -> pd.DataFrame:
     """
     Récupère les prévisions solaires journalières à partir de l'API Open-Meteo.
 
@@ -202,6 +204,8 @@ def get_solar_forecast(latitude: float, longitude: float) -> pd.DataFrame:
     params = {
         "latitude": latitude,
         "longitude": longitude,
+        "start_date": start_date,
+        "end_date": end_date,
         "daily": [
             "cloud_cover_max",
             "cloud_cover_min",
@@ -272,10 +276,10 @@ def get_solar_history(
 
     url = "https://archive-api.open-meteo.com/v1/archive"
     params = {
-        "latitude": 43.6109,
-        "longitude": 3.8763,
-        "start_date": "2024-01-01",
-        "end_date": "2025-09-30",
+        "latitude": latitude,
+        "longitude": longitude,
+        "start_date": start_date,
+        "end_date": end_date,
         "daily": [
             "sunrise",
             "sunset",

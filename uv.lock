@@ -1257,12 +1257,18 @@ dependencies = [
     { name = "psycopg2-binary" },
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     { name = "pydantic" },
 =======
 >>>>>>> ef18140 (refacto code + handler production)
 =======
     { name = "pydantic" },
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+    { name = "pydantic" },
+=======
+>>>>>>> a7cb41e (refacto code + handler production)
+>>>>>>> 94e3214 (refacto code + handler production)
     { name = "pydantic-settings" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
@@ -1313,12 +1319,18 @@ requires-dist = [
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     { name = "pydantic", specifier = ">=2.11.9" },
 =======
 >>>>>>> ef18140 (refacto code + handler production)
 =======
     { name = "pydantic", specifier = ">=2.11.9" },
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+    { name = "pydantic", specifier = ">=2.11.9" },
+=======
+>>>>>>> a7cb41e (refacto code + handler production)
+>>>>>>> 94e3214 (refacto code + handler production)
     { name = "pydantic-settings", specifier = ">=2.11.0" },
     { name = "pytest", specifier = ">=8.4.2" },
     { name = "pytest-asyncio", specifier = ">=1.2.0" },
