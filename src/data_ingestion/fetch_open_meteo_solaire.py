@@ -26,9 +26,9 @@ url = "https://archive-api.open-meteo.com/v1/archive"
 params = {
 	"latitude": 43.6109,
 	"longitude": 3.8763,
-	"start_date": "2024-01-01",
+	"start_date": "2016-09-01",
 	"end_date": "2025-09-30",
-	"daily": ["sunrise", "sunset", "daylight_duration", "sunshine_duration", "precipitation_sum", "temperature_2m_max", "temperature_2m_min", "shortwave_radiation_sum", "cloud_cover_mean", "precipitation_hours", "relative_humidity_2m_mean", "wind_gusts_10m_mean", "wind_speed_10m_mean"],
+	"daily": ["sunrise", "sunset", "daylight_duration", "sunshine_duration", "precipitation_sum", "temperature_2m_max", "temperature_2m_min", "shortwave_radiation_sum", "cloud_cover_mean", "precipitation_hours", "relative_humidity_2m_mean", "wind_gusts_10m_mean", "wind_speed_10m_mean", "temperature_2m_mean", "cloud_cover_max", "cloud_cover_min", "apparent_temperature_mean", "apparent_temperature_max", "apparent_temperature_min", "relative_humidity_2m_max", "relative_humidity_2m_min", "rain_sum", "snowfall_sum", "wind_speed_10m_max"],
 }
 response = requests.get(url, params=params)
 data = response.json()
