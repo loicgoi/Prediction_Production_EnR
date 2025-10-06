@@ -244,13 +244,13 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Exemples d'utilisation:
-  python main.py all                    # Lance tous les composants
-  python main.py data                   # Lance seulement le pipeline de données
-  python main.py train                  # Lance seulement l'entraînement des modèles
-  python main.py api                    # Lance seulement l'API FastAPI
-  python main.py streamlit              # Lance seulement Streamlit
-  python main.py status                 # Vérifie le statut des services
-  python main.py data train             # Lance données + entraînement
+python main.py all                    # Lance tous les composants
+python main.py data                   # Lance seulement le pipeline de données
+python main.py train                  # Lance seulement l'entraînement des modèles
+python main.py api                    # Lance seulement l'API FastAPI
+python main.py streamlit              # Lance seulement Streamlit
+python main.py status                 # Vérifie le statut des services
+python main.py data train             # Lance données + entraînement
         """,
     )
 
