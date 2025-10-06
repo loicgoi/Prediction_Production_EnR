@@ -35,3 +35,10 @@ data = response.json()
 df_historical_solaire = pd.DataFrame(data["daily"])
 print(df_historical_solaire.head())
 ##########------#############
+# Enregistrer les prévisions solaires
+df_previsions_solaire.to_csv("data/raw/previsions_solaire.csv", index=False)
+print("Prévisions solaires sauvegardées en CSV.")
+
+# Enregistrer l'historique solaire
+df_historical_solaire.to_csv("data/raw/historique_solaire.csv", index=False)
+print("Historique solaire sauvegardé en CSV.")
