@@ -41,6 +41,7 @@ print("Prévisions solaires sauvegardées en CSV.")
 
 # Enregistrer l'historique solaire
 df_historical_solaire.to_csv("data/raw/historique_solaire.csv", index=False)
+<<<<<<< HEAD
 print("Historique solaire sauvegardé en CSV.")
 
 
@@ -171,3 +172,6 @@ print("Historique solaire sauvegardé en CSV.")
 #     print(df_forecast.head()) 
 #     print("\nAperçu de l'historique solaire :") 
 #     print(df_history.head())
+=======
+print("Historique solaire sauvegardé en CSV.")
+>>>>>>> 24f9ac1 (fixe : csv api +interpolation temporelle ('time') pour les valeus manq)
