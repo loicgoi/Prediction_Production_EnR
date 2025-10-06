@@ -92,7 +92,6 @@ def check_missing_values(df):
 # Exemple d'utilisation
 df_historical_solaire = check_missing_values(df_historical_solaire)
 
-
 #########______________traitement des valeurs manquantes avec interpolation_______________#########
 def fill_missing_values(df: pd.DataFrame) -> pd.DataFrame:
     """
