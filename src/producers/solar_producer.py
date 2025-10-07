@@ -13,6 +13,7 @@ from typing import Dict, Any
 from datetime import date
 import pandas as pd
 from .base_producer import BaseProducer
+<<<<<<< HEAD
 from ..data_ingestion.etl_supabase import CSVDataHandler
 from ..data_ingestion.data_cleaner import DataCleaner
 <<<<<<< HEAD
@@ -20,8 +21,15 @@ from ..data_ingestion.data_cleaner import DataCleaner
 =======
 >>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> f4c8067 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
 =======
+=======
+=======
+from data_ingestion.etl_supabase import CSVDataHandler
+from data_ingestion.data_cleaner import DataCleaner
+>>>>>>> 3c7ab3c (réalisation des tests + correction erreurs d'import)
+>>>>>>> 049f2e8 (réalisation des tests + correction erreurs d'import)
 from datetime import date
 from typing import Dict, Any
 >>>>>>> bf9101c (refacto solar_producer)
