@@ -1,9 +1,18 @@
+<<<<<<< HEAD
 import pandas as pd
 from .base_producer import BaseProducer
 from data_ingestion.handlers.etl_supabase import CSVDataHandler
 from data_ingestion.utils.data_cleaner import DataCleaner
 from datetime import date
 from typing import Dict, Any
+=======
+from datetime import date
+import pandas as pd
+from typing import Dict, Any
+from .base_producer import BaseProducer
+from ..data_ingestion.etl_supabase import CSVDataHandler
+from ..data_ingestion.data_cleaner import DataCleaner
+>>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
 
 
 class SolarProducer(BaseProducer):
@@ -14,12 +23,15 @@ class SolarProducer(BaseProducer):
     def __init__(self, name: str, location: str, nominal_power: float, data_file: str):
         """
         Initialise un producteur solaire.
+<<<<<<< HEAD
 
         Args:
             name (str): Nom du producteur
             location (str): Localisation du producteur
             nominal_power (float): Puissance nominale en KWc
             data_file (str): Chemin vers le fichier de données de production
+=======
+>>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
         """
         super().__init__(name, location, nominal_power)
         self.data_file = data_file
@@ -27,6 +39,7 @@ class SolarProducer(BaseProducer):
 
     def load_production_data(self, start_date: date, end_date: date) -> pd.DataFrame:
         """
+<<<<<<< HEAD
         Charge les données solaires depuis un CSV
 
         Args:
@@ -35,13 +48,23 @@ class SolarProducer(BaseProducer):
 
         Returns:
             pd.DataFrame: DataFrame avec les données de production solaire
+=======
+        Charge les données de production solaire entre deux dates.
+>>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
         """
         try:
             df = self.data_handler.load()
 
+<<<<<<< HEAD
             # Nettoyage spécifique au données solaires
             df = DataCleaner.clean_production_data(df, "solar")
 
+=======
+            # Nettoyage spécifique aux données de production solaire
+            df = DataCleaner.clean_production_data(df, "solar")
+
+            # Filtrer par date
+>>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
             if "date" in df.columns:
                 df["date"] = pd.to_datetime(df["date"]).dt.date
                 filtered_df = df[(df["date"] >= start_date) & (df["date"] <= end_date)]
@@ -51,13 +74,18 @@ class SolarProducer(BaseProducer):
 
         except Exception as e:
             self.logger.error(
+<<<<<<< HEAD
                 f"Erreur lors du chargement des données de production solaire: {e}."
+=======
+                f"Erreur lors du chargement des données de production solaire: {e}"
+>>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
             )
             return pd.DataFrame()
 
     def calculate_statistics(self, start_date: date, end_date: date) -> Dict[str, Any]:
         """
         Calcule des statistiques sur la production solaire pour une période donnée.
+<<<<<<< HEAD
 
         Args:
             start_date (date): Date de début
@@ -67,6 +95,9 @@ class SolarProducer(BaseProducer):
             Dict[str, Any]: Dictionnaire avec les statistiques calculées
         """
 
+=======
+        """
+>>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
         df = self.load_production_data(start_date, end_date)
 
         if df.empty or "production_kwh" not in df.columns:
