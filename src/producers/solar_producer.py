@@ -16,7 +16,11 @@ from typing import Dict, Any
 from .base_producer import BaseProducer
 from ..data_ingestion.etl_supabase import CSVDataHandler
 from ..data_ingestion.data_cleaner import DataCleaner
+<<<<<<< HEAD
 >>>>>>> cbfd918 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
+=======
+>>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
+>>>>>>> f4c8067 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
 
 
 class SolarProducer(BaseProducer):
@@ -34,12 +38,15 @@ class SolarProducer(BaseProducer):
             location (str): Localisation du producteur
             nominal_power (float): Puissance nominale en KWc
             data_file (str): Chemin vers le fichier de données de production
+=======
+>>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
         """
         super().__init__(name, location, nominal_power)
         self.data_file = data_file
 
     def load_production_data(self, start_date: date, end_date: date) -> pd.DataFrame:
         """
+<<<<<<< HEAD
         Charge les données solaires depuis un CSV
 
         Args:
@@ -48,15 +55,20 @@ class SolarProducer(BaseProducer):
 
         Returns:
             pd.DataFrame: DataFrame avec les données de production solaire
+=======
+        Charge les données de production solaire entre deux dates.
+>>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
         """
         try:
             # Charger directement avec pandas
             df = pd.read_csv(self.data_file)
 
+<<<<<<< HEAD
             # Nettoyage spécifique au données solaires
             df = DataCleaner.clean_production_data(df, "solar")
 
 =======
+<<<<<<< HEAD
         """
         super().__init__(name, location, nominal_power)
         self.data_file = data_file
@@ -69,11 +81,17 @@ class SolarProducer(BaseProducer):
         try:
             df = self.data_handler.load()
 
+=======
+>>>>>>> f4c8067 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
             # Nettoyage spécifique aux données de production solaire
             df = DataCleaner.clean_production_data(df, "solar")
 
             # Filtrer par date
+<<<<<<< HEAD
 >>>>>>> cbfd918 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
+=======
+>>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
+>>>>>>> f4c8067 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
             if "date" in df.columns:
                 df["date"] = pd.to_datetime(df["date"]).dt.date
                 filtered_df = df[(df["date"] >= start_date) & (df["date"] <= end_date)]
@@ -87,7 +105,11 @@ class SolarProducer(BaseProducer):
                 f"Erreur lors du chargement des données de production solaire: {e}."
 =======
                 f"Erreur lors du chargement des données de production solaire: {e}"
+<<<<<<< HEAD
 >>>>>>> cbfd918 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
+=======
+>>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
+>>>>>>> f4c8067 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
             )
             return pd.DataFrame()
 
@@ -106,7 +128,11 @@ class SolarProducer(BaseProducer):
 
 =======
         """
+<<<<<<< HEAD
 >>>>>>> cbfd918 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
+=======
+>>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
+>>>>>>> f4c8067 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
         df = self.load_production_data(start_date, end_date)
 
         if df.empty or "production_kwh" not in df.columns:

@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
 """
 Package pour l'ingestion de données météorologiques et de production d'énergie.
 """
@@ -32,7 +28,5 @@ __all__ = [
     "WeatherDataHandler",
     "DataCleaner",
 ]
->>>>>>> cbfd918 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
-=======
+
 __all__ = []
->>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)

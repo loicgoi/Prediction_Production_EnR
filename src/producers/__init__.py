@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> f4c8067 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
 """
 Package pour les producteurs d'énergie.
 """
@@ -14,5 +17,8 @@ __all__ = [
     "WindProducer",
     "HydroProducer",
 ]
+<<<<<<< HEAD
 =======
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+>>>>>>> f4c8067 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)

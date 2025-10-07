@@ -4,6 +4,7 @@ from typing import Dict, Any
 from .base_producer import BaseProducer
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 from src.data_ingestion.utils.data_cleaner import DataCleaner
 =======
 from ..data_ingestion.etl_supabase import CSVDataHandler
@@ -13,6 +14,14 @@ from ..data_ingestion.data_cleaner import DataCleaner
 from data_ingestion.handlers.etl_supabase import CSVDataHandler
 from data_ingestion.utils.data_cleaner import DataCleaner
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+from data_ingestion.handlers.etl_supabase import CSVDataHandler
+from data_ingestion.utils.data_cleaner import DataCleaner
+=======
+from ..data_ingestion.etl_supabase import CSVDataHandler
+from ..data_ingestion.data_cleaner import DataCleaner
+>>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
+>>>>>>> f4c8067 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
 
 
 class HydroProducer(BaseProducer):
