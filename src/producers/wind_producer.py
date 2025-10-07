@@ -2,7 +2,12 @@ from datetime import date
 import pandas as pd
 from typing import Dict, Any
 from .base_producer import BaseProducer
+<<<<<<< HEAD
 from src.data_ingestion.utils.data_cleaner import DataCleaner
+=======
+from ..data_ingestion.etl_supabase import CSVDataHandler
+from ..data_ingestion.data_cleaner import DataCleaner
+>>>>>>> cbfd918 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
 
 
 class WindProducer(BaseProducer):
@@ -16,14 +21,22 @@ class WindProducer(BaseProducer):
         """
         super().__init__(name, location, nominal_power)
         self.data_file = data_file
+<<<<<<< HEAD
+=======
+        self.data_handler = CSVDataHandler(data_file)
+>>>>>>> cbfd918 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
 
     def load_production_data(self, start_date: date, end_date: date) -> pd.DataFrame:
         """
         Charge les données de production éolienne entre deux dates.
         """
         try:
+<<<<<<< HEAD
             # Charger directement avec pandas
             df = pd.read_csv(self.data_file)
+=======
+            df = self.data_handler.load()
+>>>>>>> cbfd918 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
 
             # Nettoyage spécifique aux données de production éolienne
             df = DataCleaner.clean_production_data(df, "wind")
