@@ -1,10 +1,10 @@
 from .handler_hubeau import HubeauDataHandler
 from .handler_meteo import WeatherDataHandler
-from ..producers.solar_producer import SolarProducer
-from ..producers.wind_producer import WindProducer
-from ..producers.hydro_producer import HydroProducer
-from ..data_ingestion import DataCleaner
-from ..config.settings import settings
+from producers.solar_producer import SolarProducer
+from producers.wind_producer import WindProducer
+from producers.hydro_producer import HydroProducer
+from data_ingestion import DataCleaner
+from config.settings import settings
 from .api_config import DATA_FILES
 import os
 import pandas as pd
