@@ -1,10 +1,6 @@
-"""
-Package pour l'ingestion de données météorologiques et de production d'énergie.
-"""
 
 from .etl_supabase import DataHandler, CSVDataHandler, APIDataHandler
 from .fetch_all import fetch_all, fetch_weather_data, fetch_production_data
-from .fetch_hubeau import get_hubeau_data
 from .fetch_production import fetch_production_data
 from .fetch_open_meteo_eolien import get_wind_forecast, get_wind_history
 from .fetch_open_meteo_solaire import get_solar_forecast, get_solar_history
