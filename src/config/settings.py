@@ -1,4 +1,3 @@
-import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -31,8 +30,6 @@ class Settings(BaseSettings):
     wind_nominal_power: float = 100.0  # kW
     hydro_nominal_power: float = 200.0  # kW
 
-    class Config:
-        env_file = ".env"
 
-
+# Instanciation unique
 settings = Settings()

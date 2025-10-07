@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 import pandas as pd
 from supabase import create_client
-from ..config.settings import settings
+from config.settings import settings
 import logging
 import os
 from typing import Optional, List, Dict, Any

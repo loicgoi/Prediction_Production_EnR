@@ -2,8 +2,8 @@ from datetime import date
 import pandas as pd
 from typing import Dict, Any
 from .base_producer import BaseProducer
-from ..data_ingestion.etl_supabase import CSVDataHandler
-from ..data_ingestion.data_cleaner import DataCleaner
+from data_ingestion.etl_supabase import CSVDataHandler
+from data_ingestion.data_cleaner import DataCleaner
 
 
 class HydroProducer(BaseProducer):
