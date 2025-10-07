@@ -7,15 +7,15 @@ import pandas as pd
 def load_and_clean_solar_data(filepath: str) -> pd.DataFrame:
     """
     Charge et prépare les données solaires historiques.
-    
+
     Étapes :
     1. Lecture du fichier CSV.
     2. Renommage de la colonne 'time' en 'date'.
     3. Conversion en datetime des colonnes date, sunrise et sunset.
-    
+
     Args:
         filepath (str): chemin du fichier CSV contenant les données brutes.
-    
+
     Returns:
         pd.DataFrame: DataFrame nettoyé et prêt à l'analyse.
     """
@@ -32,6 +32,7 @@ def load_and_clean_solar_data(filepath: str) -> pd.DataFrame:
     
     return df
 
+
 if __name__ == "__main__":
     # Détection automatique du chemin racine du projet
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
@@ -42,13 +43,14 @@ if __name__ == "__main__":
     # Chargement des données
     df_historical_solaire = load_and_clean_solar_data(filepath)
     print("\nAperçu des 5 premières lignes :")
-    
+
 print(df_historical_solaire.head())
 ### verification des types de données ###
 print("\nInfos du DataFrame :")
 print(df_historical_solaire.info())
 
 #######__________________Vérification doublons + drop_____________________###########
+
 
 def check_and_remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -65,8 +67,10 @@ def check_and_remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
         print("Aucun doublon trouvé. Rien à faire.")
     return df
 
+
 # Exemple d'utilisation
 df_historical_solaire = check_and_remove_duplicates(df_historical_solaire)
+
 
 ##########___________________verification valeurs manquantes___________________________#########
 def check_missing_values(df):
@@ -76,13 +80,15 @@ def check_missing_values(df):
     """
     missing = df.isnull().sum()
     total_missing = missing.sum()
-    
+
     if total_missing == 0:
         print("Aucune valeur manquante dans le DataFrame.")
     else:
         print(f"{total_missing} valeurs manquantes trouvées :")
         print(missing[missing > 0])
     return df
+
+
 # Exemple d'utilisation
 df_historical_solaire = check_missing_values(df_historical_solaire)
 
@@ -124,6 +130,7 @@ def fill_missing_values(df: pd.DataFrame) -> pd.DataFrame:
 df_historical_solaire = fill_missing_values(df_historical_solaire)
 
 ##########________________________verification valeurs aberrantes ________________________________#########
+
 
 def check_solar_data(df):
     """
@@ -185,7 +192,11 @@ def check_solar_data(df):
                 print(invalid[[col]])
             else:
                 print(f"{col} OK.")
+
+
 check_solar_data(df_historical_solaire)
+
+
 ##########_________Nettoyage / transformation des données________########
 def convert_units(df):
     """
@@ -214,6 +225,8 @@ def convert_units(df):
     )
 
     return df
+
+
 df_historical_solaire = convert_units(df_historical_solaire)
 # Après nettoyage
 df_historical_solaire = convert_units(df_historical_solaire)
@@ -228,10 +241,10 @@ print(df_historical_solaire[[
 def select_relevant_columns(df: pd.DataFrame) -> pd.DataFrame:
     """
     Sélectionne uniquement les colonnes utiles pour l'analyse et l'entraînement futur.
-    
+
     Args:
         df (pd.DataFrame): DataFrame complet après nettoyage et conversion des unités
-    
+
     Returns:
         pd.DataFrame: DataFrame réduit aux colonnes pertinentes
     """
@@ -251,11 +264,12 @@ def select_relevant_columns(df: pd.DataFrame) -> pd.DataFrame:
 
     # Garder uniquement les colonnes disponibles dans df
     df_selected = df[[col for col in relevant_cols if col in df.columns]]
-    
+
     print("\nColonnes retenues pour l'entraînement :")
     print(df_selected.columns.tolist())
-    
+
     return df_selected
+
 
 # Exemple d'utilisation
 df_historical_solaire = select_relevant_columns(df_historical_solaire)
