@@ -56,12 +56,12 @@ class ProducteurSolaire(Producteur):
         self.df = self.df.interpolate(method="linear")
 
         # Conversion des unités
-        if "sunshine_duration (s)" in self.df.columns:
-            self.df["sunshine_duration_h"] = self.df["sunshine_duration (s)"] / 3600
-        if "daylight_duration (s)" in self.df.columns:
-            self.df["daylight_duration_h"] = self.df["daylight_duration (s)"] / 3600
-        if "shortwave_radiation_sum (MJ/m²)" in self.df.columns:
-            self.df["shortwave_radiation_sum_kWhm2"] = self.df["shortwave_radiation_sum (MJ/m²)"] * 0.27778
+        if "sunshine_duration" in self.df.columns:
+            self.df["sunshine_duration_h"] = self.df["sunshine_duration"] / 3600
+        if "daylight_duration" in self.df.columns:
+            self.df["daylight_duration_h"] = self.df["daylight_duration"] / 3600
+        if "shortwave_radiation_sum" in self.df.columns:
+            self.df["shortwave_radiation_sum_kWhm2"] = self.df["shortwave_radiation_sum"] * 0.27778
 # Conversion de l'irradiation solaire de MJ/m² en kWh/m²: 
 # 1 MJ = 1 000 000 J   # 1 kWh = 3 600 000 J  # Donc 1 MJ = 1 / 3.6 kWh ≈ 0.27778 kWh
         print("Nettoyage terminé pour les données solaires.")
