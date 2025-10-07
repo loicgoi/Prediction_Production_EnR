@@ -66,3 +66,41 @@ class ProducteurSolaire(Producteur):
 # 1 MJ = 1 000 000 J   # 1 kWh = 3 600 000 J  # Donc 1 MJ = 1 / 3.6 kWh ≈ 0.27778 kWh
         print("Nettoyage terminé pour les données solaires.")
         return self.df
+########################## test d'utilisation classe solaire #################
+if __name__ == "__main__":
+    ##########___________________Vérification des méthodes___________________________#########
+
+    # 1️ Instanciation de la classe
+    solaire = ProducteurSolaire(nom="Centrale Solaire HQ", lieu="Montpellier", puissance_nominale=150.0)
+    print("Instance créée :", solaire.nom, "-", solaire.lieu, "-", solaire.puissance_nominale)
+
+    # 2️ Test de la méthode load_data()
+    try:
+        filepath = "/home/chaima/Prediction_Production_EnR/data/raw/historique_solaire.csv"
+        df = solaire.load_data(filepath)
+        print("Données chargées avec succès.")
+        print(df.head())
+    except Exception as e:
+        print("Erreur lors du chargement des données :", e)
+
+    # 3️ Test de la méthode clean_data()
+    try:
+        df_clean = solaire.clean_data()
+        print("Données nettoyées avec succès.")
+        print(df_clean.info())
+    except Exception as e:
+        print("Erreur lors du nettoyage des données :", e)
+
+    # 4️ Test de la méthode calcul_stats()
+    try:
+        stats = solaire.calcul_stats()
+        print("Statistiques calculées :")
+        print(stats)
+    except Exception as e:
+        print("Erreur lors du calcul des statistiques :", e)
+
+    # 5️ Vérification du DataFrame final
+    print("\n=== Vérification du DataFrame final ===")
+    print("Lignes :", len(solaire.df))
+    print("Colonnes :", list(solaire.df.columns))
+    print("Valeurs manquantes totales :", solaire.df.isnull().sum().sum())
