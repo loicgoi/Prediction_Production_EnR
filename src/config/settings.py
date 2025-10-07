@@ -1,13 +1,6 @@
 import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# load_dotenv()
-
-# SUPABASE_URL = os.getenv("SUPABASE_URL")
-# SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-
-# supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -16,12 +9,30 @@ class Settings(BaseSettings):
         case_sensitive=False,
     )
 
+    # Supabase
     supabase_url: str
     supabase_key: str
 
+    # Localisation
     montpellier_latitude: float = 43.6109
     montpellier_longitude: float = 3.8763
     hubeau_station: str = "Y321002101"
+
+    # API
+    api_host: str = "0.0.0.0"
+    api_port: int = 8000
+
+    # Chemins
+    models_path: str = "models/saved"
+    data_raw_path: str = "data/raw"
+
+    # Configuration des producteurs
+    solar_nominal_power: float = 150.0  # kWc
+    wind_nominal_power: float = 100.0  # kW
+    hydro_nominal_power: float = 200.0  # kW
+
+    class Config:
+        env_file = ".env"
 
 
 settings = Settings()

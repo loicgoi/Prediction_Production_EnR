@@ -1,0 +1,74 @@
+from datetime import date
+import pandas as pd
+from typing import Dict, Any
+from .base_producer import BaseProducer
+from ..data_ingestion.etl_supabase import CSVDataHandler
+from ..data_ingestion.data_cleaner import DataCleaner
+
+
+class SolarProducer(BaseProducer):
+    """
+    Producteur d'énergie solaire.
+    """
+
+    def __init__(self, name: str, location: str, nominal_power: float, data_file: str):
+        """
+        Initialise un producteur solaire.
+        """
+        super().__init__(name, location, nominal_power)
+        self.data_file = data_file
+        self.data_handler = CSVDataHandler(data_file)
+
+    def load_production_data(self, start_date: date, end_date: date) -> pd.DataFrame:
+        """
+        Charge les données de production solaire entre deux dates.
+        """
+        try:
+            df = self.data_handler.load()
+
+            # Nettoyage spécifique aux données de production solaire
+            df = DataCleaner.clean_production_data(df, "solar")
+
+            # Filtrer par date
+            if "date" in df.columns:
+                df["date"] = pd.to_datetime(df["date"]).dt.date
+                filtered_df = df[(df["date"] >= start_date) & (df["date"] <= end_date)]
+                return filtered_df
+
+            return df
+
+        except Exception as e:
+            self.logger.error(
+                f"Erreur lors du chargement des données de production solaire: {e}"
+            )
+            return pd.DataFrame()
+
+    def calculate_statistics(self, start_date: date, end_date: date) -> Dict[str, Any]:
+        """
+        Calcule des statistiques sur la production solaire pour une période donnée.
+        """
+        df = self.load_production_data(start_date, end_date)
+
+        if df.empty or "production_kwh" not in df.columns:
+            return {
+                "total_production": 0,
+                "average_daily_production": 0,
+                "max_daily_production": 0,
+                "min_daily_production": 0,
+                "capacity_factor": 0.0,
+            }
+
+        total_production = df["production_kwh"].sum()
+        days = (end_date - start_date).days + 1
+        average_daily_production = total_production / days
+        max_daily_production = df["production_kwh"].max()
+        min_daily_production = df["production_kwh"].min()
+        capacity_factor = self.get_production_capacity_factor(start_date, end_date)
+
+        return {
+            "total_production": total_production,
+            "average_daily_production": average_daily_production,
+            "max_daily_production": max_daily_production,
+            "min_daily_production": min_daily_production,
+            "capacity_factor": capacity_factor,
+        }
