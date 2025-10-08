@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> f4c8067 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
 """
@@ -25,3 +26,5 @@ __all__ = [
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
 =======
 >>>>>>> f4c8067 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
+=======
+>>>>>>> 0497523 (restructuration des fichiers + tests fonctionnels)

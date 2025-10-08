@@ -1258,6 +1258,7 @@ dependencies = [
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     { name = "pydantic" },
 =======
 >>>>>>> ef18140 (refacto code + handler production)
@@ -1269,6 +1270,14 @@ dependencies = [
 =======
 >>>>>>> a7cb41e (refacto code + handler production)
 >>>>>>> 94e3214 (refacto code + handler production)
+=======
+    { name = "pydantic" },
+=======
+>>>>>>> a7cb41e (refacto code + handler production)
+=======
+    { name = "pydantic" },
+>>>>>>> b95c547 (restructuration des fichiers + tests fonctionnels)
+>>>>>>> 0497523 (restructuration des fichiers + tests fonctionnels)
     { name = "pydantic-settings" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
@@ -1320,6 +1329,7 @@ requires-dist = [
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     { name = "pydantic", specifier = ">=2.11.9" },
 =======
 >>>>>>> ef18140 (refacto code + handler production)
@@ -1331,6 +1341,14 @@ requires-dist = [
 =======
 >>>>>>> a7cb41e (refacto code + handler production)
 >>>>>>> 94e3214 (refacto code + handler production)
+=======
+    { name = "pydantic", specifier = ">=2.11.9" },
+=======
+>>>>>>> a7cb41e (refacto code + handler production)
+=======
+    { name = "pydantic", specifier = ">=2.11.9" },
+>>>>>>> b95c547 (restructuration des fichiers + tests fonctionnels)
+>>>>>>> 0497523 (restructuration des fichiers + tests fonctionnels)
     { name = "pydantic-settings", specifier = ">=2.11.0" },
     { name = "pytest", specifier = ">=8.4.2" },
     { name = "pytest-asyncio", specifier = ">=1.2.0" },

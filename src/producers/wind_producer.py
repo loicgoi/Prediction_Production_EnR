@@ -6,6 +6,7 @@ from .base_producer import BaseProducer
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 from src.data_ingestion.utils.data_cleaner import DataCleaner
 =======
 from ..data_ingestion.etl_supabase import CSVDataHandler
@@ -18,6 +19,8 @@ from data_ingestion.utils.data_cleaner import DataCleaner
 =======
 =======
 >>>>>>> 049f2e8 (réalisation des tests + correction erreurs d'import)
+=======
+>>>>>>> 0497523 (restructuration des fichiers + tests fonctionnels)
 from data_ingestion.handlers.etl_supabase import CSVDataHandler
 from data_ingestion.utils.data_cleaner import DataCleaner
 =======
@@ -31,7 +34,14 @@ from ..data_ingestion.data_cleaner import DataCleaner
 from data_ingestion.etl_supabase import CSVDataHandler
 from data_ingestion.data_cleaner import DataCleaner
 >>>>>>> 3c7ab3c (réalisation des tests + correction erreurs d'import)
+<<<<<<< HEAD
 >>>>>>> 049f2e8 (réalisation des tests + correction erreurs d'import)
+=======
+=======
+from data_ingestion.handlers.etl_supabase import CSVDataHandler
+from data_ingestion.utils.data_cleaner import DataCleaner
+>>>>>>> b95c547 (restructuration des fichiers + tests fonctionnels)
+>>>>>>> 0497523 (restructuration des fichiers + tests fonctionnels)
 
 
 class WindProducer(BaseProducer):

@@ -1,6 +1,9 @@
 import pytest
 import pandas as pd
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b95c547 (restructuration des fichiers + tests fonctionnels)
 from unittest.mock import Mock, patch
 <<<<<<< HEAD
 from src.data_ingestion.handlers.etl_supabase import (
@@ -77,6 +80,7 @@ from data_ingestion.handlers.etl_supabase import (
     CSVDataHandler,
     APIDataHandler,
 )
+<<<<<<< HEAD
 
 
 class ConcreteDataHandler(DataHandler):
@@ -143,87 +147,68 @@ def test_api_data_handler_load():
 =======
 =======
 from unittest.mock import patch
+=======
+>>>>>>> b95c547 (restructuration des fichiers + tests fonctionnels)
 
 
-class TestDataHandler:
-    """Tests pour DataHandler et ses sous-classes"""
+class ConcreteDataHandler(DataHandler):
+    """Implémentation concrète pour tester la classe abstraite."""
 
-    def test_csv_data_handler_initialization(self):
-        from data_ingestion.etl_supabase import CSVDataHandler
+    def load(self):
+        self.df = pd.DataFrame({"col1": [1, 2], "col2": [3, 4]})
+        return self.df
 
+
+def test_data_handler_initialization():
+    """Test l'initialisation du DataHandler."""
+    handler = ConcreteDataHandler()
+    assert handler.df.empty
+    assert handler.client is not None
+
+
+def test_data_handler_infer_sql_type():
+    """Test l'inférence des types SQL."""
+    handler = ConcreteDataHandler()
+
+    assert handler._infer_sql_type(pd.Int64Dtype()) == "INTEGER"
+    assert handler._infer_sql_type(pd.Float64Dtype()) == "FLOAT"
+    assert handler._infer_sql_type(pd.BooleanDtype()) == "BOOLEAN"
+    assert handler._infer_sql_type(pd.DatetimeTZDtype(tz="UTC")) == "TIMESTAMP"
+    assert handler._infer_sql_type(pd.StringDtype()) == "TEXT"
+
+
+@patch("data_ingestion.handlers.etl_supabase.os.path.exists")
+def test_csv_data_handler_load(mock_exists):
+    """Test le chargement des données CSV."""
+    mock_exists.return_value = True
+
+    with patch("pandas.read_csv") as mock_read_csv:
+        mock_read_csv.return_value = pd.DataFrame({"test": [1, 2, 3]})
         handler = CSVDataHandler("test.csv")
-        assert handler.file_path == "test.csv"
+        df = handler.load()
 
-    def test_csv_data_handler_load(self, tmp_path):
-        from data_ingestion.etl_supabase import CSVDataHandler
-
-        # Crée un fichier CSV temporaire
-        csv_file = tmp_path / "test.csv"
-        csv_file.write_text("id,value\n1,100\n2,200\n")
-
-        # Initialise le handler avec le vrai chemin (str)
-        handler = CSVDataHandler(file_path=str(csv_file))
-
-        # Patch pandas.read_csv pour s'assurer qu'il appelle la vraie fonction
-        with patch("pandas.read_csv", wraps=pd.read_csv) as mock_read:
-            result = handler.load()
-            # On compare avec str(csv_file) pour matcher ce qui est réellement passé
-            mock_read.assert_called_once_with(str(csv_file))
-
-        # Vérifie que le résultat est correct
-        assert not result.empty
-        assert list(result.columns) == ["id", "value"]
-        assert result.shape == (2, 2)
-
-    @patch("pandas.read_csv")
-    def test_csv_data_handler_file_not_found(self, mock_read_csv):
-        from data_ingestion.etl_supabase import CSVDataHandler
-
-        mock_read_csv.side_effect = FileNotFoundError("File not found")
-
-        handler = CSVDataHandler("nonexistent.csv")
-
-        with pytest.raises(FileNotFoundError):
-            handler.load()
-
-    def test_api_data_handler_initialization(self):
-        from data_ingestion.etl_supabase import APIDataHandler
-
-        def mock_loader():
-            return pd.DataFrame({"test": [1, 2, 3]})
-
-        handler = APIDataHandler(mock_loader, param1="value1")
-        assert handler.loader_function == mock_loader
-        assert handler.loader_kwargs == {"param1": "value1"}
-
-    def test_api_data_handler_load(self, mock_production_data):
-        from data_ingestion.etl_supabase import APIDataHandler
-
-        def mock_loader(**kwargs):
-            return mock_production_data
-
-        handler = APIDataHandler(mock_loader, param1="value1")
-        result = handler.load()
-
-        assert not result.empty
+        assert not df.empty
+        mock_read_csv.assert_called_once_with("test.csv")
 
 
-class TestSQLTypeInference:
-    """Tests pour l'inférence des types SQL"""
+@patch("data_ingestion.handlers.etl_supabase.os.path.exists")
+def test_csv_data_handler_file_not_found(mock_exists):
+    """Test la gestion des fichiers manquants."""
+    mock_exists.return_value = False
+    handler = CSVDataHandler("nonexistent.csv")
 
-    def test_infer_sql_type_integer(self):
-        from data_ingestion.etl_supabase import DataHandler
+    with pytest.raises(FileNotFoundError):
+        handler.load()
 
-        class TestHandler(DataHandler):
-            def load(self):
-                return pd.DataFrame()
 
-        handler = TestHandler()
+def test_api_data_handler_load():
+    """Test le chargement des données via API."""
+    mock_loader = Mock(return_value=pd.DataFrame({"api_data": [1, 2, 3]}))
+    handler = APIDataHandler(loader_function=mock_loader, param1="value1")
 
-        # Test integer types
-        int_series = pd.Series([1, 2, 3], dtype="int64")
-        assert handler._infer_sql_type(int_series.dtype) == "INTEGER"
+    df = handler.load()
 
+<<<<<<< HEAD
     def test_infer_sql_type_float(self):
         from data_ingestion.etl_supabase import DataHandler
 
@@ -250,4 +235,11 @@ class TestSQLTypeInference:
         text_series = pd.Series(["a", "b", "c"], dtype="object")
         assert handler._infer_sql_type(text_series.dtype) == "TEXT"
 >>>>>>> 3c7ab3c (réalisation des tests + correction erreurs d'import)
+<<<<<<< HEAD
 >>>>>>> 049f2e8 (réalisation des tests + correction erreurs d'import)
+=======
+=======
+    assert not df.empty
+    mock_loader.assert_called_once_with(param1="value1")
+>>>>>>> b95c547 (restructuration des fichiers + tests fonctionnels)
+>>>>>>> 0497523 (restructuration des fichiers + tests fonctionnels)
