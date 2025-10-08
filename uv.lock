@@ -1072,9 +1072,13 @@ dependencies = [
     { name = "plotly" },
     { name = "psycopg2-binary" },
 <<<<<<< HEAD
+<<<<<<< HEAD
     { name = "pydantic" },
 =======
 >>>>>>> a7cb41e (refacto code + handler production)
+=======
+    { name = "pydantic" },
+>>>>>>> b95c547 (restructuration des fichiers + tests fonctionnels)
     { name = "pydantic-settings" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
@@ -1112,9 +1116,13 @@ requires-dist = [
     { name = "plotly", specifier = ">=6.3.0" },
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
 <<<<<<< HEAD
+<<<<<<< HEAD
     { name = "pydantic", specifier = ">=2.11.9" },
 =======
 >>>>>>> a7cb41e (refacto code + handler production)
+=======
+    { name = "pydantic", specifier = ">=2.11.9" },
+>>>>>>> b95c547 (restructuration des fichiers + tests fonctionnels)
     { name = "pydantic-settings", specifier = ">=2.11.0" },
     { name = "pytest", specifier = ">=8.4.2" },
     { name = "pytest-asyncio", specifier = ">=1.2.0" },

@@ -3,6 +3,7 @@ import pandas as pd
 from .base_producer import BaseProducer
 from data_ingestion.handlers.etl_supabase import CSVDataHandler
 from data_ingestion.utils.data_cleaner import DataCleaner
+<<<<<<< HEAD
 from datetime import date
 from typing import Dict, Any
 =======
@@ -17,6 +18,8 @@ from ..data_ingestion.data_cleaner import DataCleaner
 from data_ingestion.etl_supabase import CSVDataHandler
 from data_ingestion.data_cleaner import DataCleaner
 >>>>>>> 3c7ab3c (réalisation des tests + correction erreurs d'import)
+=======
+>>>>>>> b95c547 (restructuration des fichiers + tests fonctionnels)
 from datetime import date
 from typing import Dict, Any
 
