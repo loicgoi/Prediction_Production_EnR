@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 """
@@ -32,3 +33,6 @@ __all__ = [
     "DataCleaner",
 ]
 >>>>>>> cbfd918 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
+=======
+__all__ = []
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)

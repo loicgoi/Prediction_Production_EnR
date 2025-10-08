@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 Package pour les producteurs d'énergie.
 """
@@ -13,3 +14,5 @@ __all__ = [
     "WindProducer",
     "HydroProducer",
 ]
+=======
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)

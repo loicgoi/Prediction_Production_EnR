@@ -1,7 +1,12 @@
 <<<<<<< HEAD
 import pandas as pd
 from .base_producer import BaseProducer
+<<<<<<< HEAD
 from src.data_ingestion.utils.data_cleaner import DataCleaner
+=======
+from data_ingestion.handlers.etl_supabase import CSVDataHandler
+from data_ingestion.utils.data_cleaner import DataCleaner
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
 from datetime import date
 from typing import Dict, Any
 =======

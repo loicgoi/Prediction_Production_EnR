@@ -1,7 +1,11 @@
 import pytest
 import pandas as pd
 from datetime import date
+<<<<<<< HEAD
 from src.producers.base_producer import BaseProducer
+=======
+from producers.base_producer import BaseProducer
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
 
 
 class ConcreteProducer(BaseProducer):

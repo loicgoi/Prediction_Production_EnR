@@ -1,13 +1,21 @@
 import pytest
 import pandas as pd
 from unittest.mock import patch, Mock
+<<<<<<< HEAD
 from src.data_ingestion.fetchers.fetch_open_meteo_eolien import (
+=======
+from data_ingestion.fetchers.fetch_open_meteo_eolien import (
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
     get_wind_forecast,
     get_wind_history,
 )
 
 
+<<<<<<< HEAD
 @patch("src.data_ingestion.fetchers.fetch_open_meteo_eolien.requests.get")
+=======
+@patch("data_ingestion.fetchers.fetch_open_meteo_eolien.requests.get")
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
 def test_get_wind_forecast_success(mock_get):
     """Test la récupération des prévisions éoliennes."""
     mock_response = Mock()
@@ -21,13 +29,21 @@ def test_get_wind_forecast_success(mock_get):
     mock_response.raise_for_status = Mock()
     mock_get.return_value = mock_response
 
+<<<<<<< HEAD
     df = get_wind_forecast(43.6109, 3.8763)
+=======
+    df = get_wind_forecast(43.6109, 3.8763, "2024-01-01", "2024-01-02")
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
 
     assert isinstance(df, pd.DataFrame)
     assert not df.empty
 
 
+<<<<<<< HEAD
 @patch("src.data_ingestion.fetchers.fetch_open_meteo_eolien.requests.get")
+=======
+@patch("data_ingestion.fetchers.fetch_open_meteo_eolien.requests.get")
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
 def test_get_wind_history_success(mock_get):
     """Test la récupération de l'historique éolien."""
     mock_response = Mock()

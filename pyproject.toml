@@ -19,10 +19,7 @@ dependencies = [
     "pdoc>=15.0.4",
     "plotly>=6.3.0",
     "psycopg2-binary>=2.9.10",
-<<<<<<< HEAD
     "pydantic>=2.11.9",
-=======
->>>>>>> ef18140 (refacto code + handler production)
     "pydantic-settings>=2.11.0",
     "pytest>=8.4.2",
     "pytest-asyncio>=1.2.0",
@@ -37,6 +34,14 @@ dependencies = [
     "supabase>=2.20.0",
     "uvicorn>=0.37.0",
     "xgboost>=3.0.5",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.9.0",
+    "flake8>=7.3.0",
+    "isort>=6.0.1",
+    "pytest-asyncio>=1.2.0",
 ]
 
 [dependency-groups]

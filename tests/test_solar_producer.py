@@ -2,7 +2,11 @@ import pytest
 import pandas as pd
 from datetime import date
 from unittest.mock import Mock, patch
+<<<<<<< HEAD
 from src.producers.solar_producer import SolarProducer
+=======
+from producers.solar_producer import SolarProducer
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
 
 
 def test_solar_producer_initialization():
@@ -17,6 +21,7 @@ def test_solar_producer_initialization():
     assert producer.data_file == "data/raw/prod_solaire.csv"
 
 
+<<<<<<< HEAD
 @patch("pandas.read_csv")
 @patch("src.producers.solar_producer.DataCleaner")
 def test_solar_producer_load_data_success(mock_cleaner, mock_read_csv):
@@ -35,12 +40,29 @@ def test_solar_producer_load_data_success(mock_cleaner, mock_read_csv):
             "date": [date(2024, 1, 1), date(2024, 1, 2), date(2024, 1, 3)],
             "production_kwh": [150.5, 160.2, 140.8],
         }
+=======
+@patch("producers.solar_producer.CSVDataHandler")
+@patch("producers.solar_producer.DataCleaner")
+def test_solar_producer_load_data(mock_cleaner, mock_handler):
+    """Test le chargement des données solaires."""
+    # Mock du handler
+    mock_instance = Mock()
+    mock_instance.load.return_value = pd.DataFrame(
+        {"date": ["2024-01-01", "2024-01-02"], "prod_solaire": [150.5, 160.2]}
+    )
+    mock_handler.return_value = mock_instance
+
+    # Mock du cleaner
+    mock_cleaner.clean_production_data.return_value = pd.DataFrame(
+        {"date": ["2024-01-01", "2024-01-02"], "production_kwh": [150.5, 160.2]}
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
     )
 
     producer = SolarProducer("Test", "Montpellier", 150.0, "test.csv")
     df = producer.load_production_data(date(2024, 1, 1), date(2024, 1, 2))
 
     assert not df.empty
+<<<<<<< HEAD
     assert len(df) == 2  # Doit être filtré par dates
     assert "production_kwh" in df.columns
     mock_read_csv.assert_called_once_with("test.csv")
@@ -73,10 +95,20 @@ def test_solar_producer_load_data_empty_file(mock_cleaner, mock_read_csv):
     mock_read_csv.assert_called_once_with("test.csv")
 
 
+=======
+    mock_instance.load.assert_called_once()
+    mock_cleaner.clean_production_data.assert_called_once()
+
+
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
 def test_solar_producer_calculate_statistics():
     """Test le calcul des statistiques solaires."""
     producer = SolarProducer("Test", "Montpellier", 150.0, "test.csv")
 
+<<<<<<< HEAD
+=======
+    # Mock de load_production_data
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
     with patch.object(producer, "load_production_data") as mock_load:
         mock_load.return_value = pd.DataFrame(
             {
@@ -89,6 +121,7 @@ def test_solar_producer_calculate_statistics():
 
         assert "total_production" in stats
         assert "average_daily_production" in stats
+<<<<<<< HEAD
         assert "max_daily_production" in stats
         assert "min_daily_production" in stats
         assert "capacity_factor" in stats
@@ -100,6 +133,13 @@ def test_solar_producer_calculate_statistics():
 
 
 def test_solar_producer_calculate_statistics_empty_data():
+=======
+        assert "capacity_factor" in stats
+        assert stats["total_production"] == 310.7
+
+
+def test_solar_producer_statistics_empty_data():
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
     """Test les statistiques avec données vides."""
     producer = SolarProducer("Test", "Montpellier", 150.0, "test.csv")
 
@@ -109,6 +149,7 @@ def test_solar_producer_calculate_statistics_empty_data():
         stats = producer.calculate_statistics(date(2024, 1, 1), date(2024, 1, 2))
 
         assert stats["total_production"] == 0
+<<<<<<< HEAD
         assert stats["average_daily_production"] == 0
         assert stats["max_daily_production"] == 0
         assert stats["min_daily_production"] == 0
@@ -151,3 +192,6 @@ def test_solar_producer_capacity_factor_empty_data():
         )
 
         assert capacity_factor == 0.0
+=======
+        assert stats["capacity_factor"] == 0.0
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)

@@ -1,10 +1,26 @@
 import pandas as pd
 import logging
+<<<<<<< HEAD
 from src.producers.solar_producer import SolarProducer
 from src.producers.wind_producer import WindProducer
 from src.producers.hydro_producer import HydroProducer
 from src.data_ingestion.api.api_config import DATA_FILES
 from src.config.settings import settings
+=======
+<<<<<<<< HEAD:src/data_ingestion/fetch_production.py
+from ..producers.solar_producer import SolarProducer
+from ..producers.wind_producer import WindProducer
+from ..producers.hydro_producer import HydroProducer
+from .api_config import DATA_FILES
+from ..config.settings import settings
+========
+from producers.solar_producer import SolarProducer
+from producers.wind_producer import WindProducer
+from producers.hydro_producer import HydroProducer
+from data_ingestion.api.api_config import DATA_FILES
+from src.config.settings import settings
+>>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels):src/data_ingestion/fetchers/fetch_production.py
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
 
 
 def fetch_production_data(producer_type: str, start_date=None, end_date=None):
@@ -19,12 +35,19 @@ def fetch_production_data(producer_type: str, start_date=None, end_date=None):
     Returns:
         pd.DataFrame: DataFrame avec les données de production
     """
+<<<<<<< HEAD
     # Validation du type de producteur
     if producer_type not in DATA_FILES:
         # On lève explicitement une erreur (ne sera pas capturée plus bas)
         raise ValueError(f"Type de producteur invalide: {producer_type}")
 
     try:
+=======
+    try:
+        if producer_type not in DATA_FILES:
+            raise ValueError(f"Type de producteur invalide: {producer_type}")
+
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
         # Configuration des producteurs
         producers_config = {
             "solar": {
@@ -48,8 +71,11 @@ def fetch_production_data(producer_type: str, start_date=None, end_date=None):
         }
 
         config = producers_config[producer_type]
+<<<<<<< HEAD
 
         # Instanciation du producteur
+=======
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
         producer = config["class"](
             name=config["name"],
             location=config["location"],
@@ -57,12 +83,17 @@ def fetch_production_data(producer_type: str, start_date=None, end_date=None):
             data_file=DATA_FILES[producer_type],
         )
 
+<<<<<<< HEAD
         # Gestion des dates par défaut
+=======
+        # Définir les dates par défaut si non spécifiées
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
         if start_date is None:
             start_date = pd.Timestamp("2022-01-01").date()
         if end_date is None:
             end_date = pd.Timestamp.today().date()
 
+<<<<<<< HEAD
         # Chargement des données de production
         df = producer.load_production_data(start_date, end_date)
         return df
@@ -73,6 +104,12 @@ def fetch_production_data(producer_type: str, start_date=None, end_date=None):
 
     except Exception as e:
         # Autres erreurs → journalisation et retour d’un DataFrame vide
+=======
+        df = producer.load_production_data(start_date, end_date)
+        return df
+
+    except Exception as e:
+>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
         logging.error(
             f"Erreur lors de la récupération des données de production {producer_type}: {e}"
         )
