@@ -109,28 +109,28 @@ def outliers_surface_pressure(df, col="surface_pressure_mean", min_val=950, max_
 
 
 
-# Vérification et teste des fonction prédéfini
+# # Vérification et teste des fonction prédéfini
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    # Chargement des données csv 
-    df_eolien_histo = pd.read_csv('/home/fadilatou/Prediction_Production_EnR/data/raw/eolien_histo.csv')
-    df_clean = df_eolien_histo.copy()
+#     # Chargement des données csv 
+#     df_eolien_histo = pd.read_csv('/home/fadilatou/Prediction_Production_EnR/data/raw/eolien_histo.csv')
+#     df_clean = df_eolien_histo.copy()
 
-# Gestion des valeurs manquantes
-    df_clean = wind_isnull(df_clean)
+# # Gestion des valeurs manquantes
+#     df_clean = wind_isnull(df_clean)
 
-# Gestion des doublons 
-    df_clean = wind_doublons(df_clean)
+# # Gestion des doublons 
+#     df_clean = wind_doublons(df_clean)
 
-# Nettoyage et formatage de la colonne date
-    df_clean = date_time(df_clean)
+# # Nettoyage et formatage de la colonne date
+#     df_clean = date_time(df_clean)
 
-# Valeurs aberrantes vitesse du vent
-    df_clean = outliers_wind_speed(df_clean)
+# # Valeurs aberrantes vitesse du vent
+#     df_clean = outliers_wind_speed(df_clean)
 
-# Valeurs aberrantes direction du vent
-    df_clean = outliers_wind_direction(df_clean)
+# # Valeurs aberrantes direction du vent
+#     df_clean = outliers_wind_direction(df_clean)
 
-# Valeurs aberrantes pression de surface
-    df_clean = outliers_surface_pressure(df_clean)
+# # Valeurs aberrantes pression de surface
+#     df_clean = outliers_surface_pressure(df_clean)
