@@ -1,9 +1,15 @@
 import pandas as pd
 import logging
 from .etl_supabase import APIDataHandler
-from .fetch_open_meteo_eolien import get_wind_forecast, get_wind_history
-from .fetch_open_meteo_solaire import get_solar_forecast, get_solar_history
-from .data_cleaner import DataCleaner
+from data_ingestion.fetchers.fetch_open_meteo_eolien import (
+    get_wind_forecast,
+    get_wind_history,
+)
+from data_ingestion.fetchers.fetch_open_meteo_solaire import (
+    get_solar_forecast,
+    get_solar_history,
+)
+from data_ingestion.utils.data_cleaner import DataCleaner
 
 
 class WeatherDataHandler(APIDataHandler):

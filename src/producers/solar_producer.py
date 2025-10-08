@@ -1,7 +1,7 @@
 import pandas as pd
 from .base_producer import BaseProducer
-from data_ingestion.etl_supabase import CSVDataHandler
-from data_ingestion.data_cleaner import DataCleaner
+from data_ingestion.handlers.etl_supabase import CSVDataHandler
+from data_ingestion.utils.data_cleaner import DataCleaner
 from datetime import date
 from typing import Dict, Any
 
