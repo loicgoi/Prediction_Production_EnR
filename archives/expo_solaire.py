@@ -92,7 +92,10 @@ def check_missing_values(df):
 # Exemple d'utilisation
 df_historical_solaire = check_missing_values(df_historical_solaire)
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5e0310f (création dossier archives/ pour conservation de fichiers de dev)
 #########______________traitement des valeurs manquantes avec interpolation_______________#########
 def fill_missing_values(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -287,6 +290,7 @@ def select_relevant_columns(df: pd.DataFrame) -> pd.DataFrame:
 df_historical_solaire = select_relevant_columns(df_historical_solaire)
 print(df_historical_solaire.head())
 ############_____________________________________###################
+<<<<<<< HEAD
 <<<<<<< HEAD
 from logging import info
 import os
@@ -607,3 +611,5 @@ print(df_historical_solaire.head())
 ############_____________________________________###################
 =======
 >>>>>>> 9d0d371 (feat: ajout nettoyage et prétraitement données solaires)
+=======
+>>>>>>> 5e0310f (création dossier archives/ pour conservation de fichiers de dev)
