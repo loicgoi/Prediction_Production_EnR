@@ -3,8 +3,8 @@ import logging
 from producers.solar_producer import SolarProducer
 from producers.wind_producer import WindProducer
 from producers.hydro_producer import HydroProducer
-from .api_config import DATA_FILES
-from config.settings import settings
+from data_ingestion.api.api_config import DATA_FILES
+from src.config.settings import settings
 
 
 def fetch_production_data(producer_type: str, start_date=None, end_date=None):

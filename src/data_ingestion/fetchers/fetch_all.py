@@ -1,15 +1,16 @@
-from .handler_hubeau import HubeauDataHandler
-from .handler_meteo import WeatherDataHandler
-from producers.solar_producer import SolarProducer
-from producers.wind_producer import WindProducer
-from producers.hydro_producer import HydroProducer
-from data_ingestion import DataCleaner
-from config.settings import settings
-from .api_config import DATA_FILES
 import os
 import pandas as pd
 import logging
 from datetime import date, timedelta
+
+from data_ingestion.handlers.handler_hubeau import HubeauDataHandler
+from data_ingestion.handlers.handler_meteo import WeatherDataHandler
+from src.config.settings import settings
+from data_ingestion.api.api_config import DATA_FILES
+
+from producers.solar_producer import SolarProducer
+from producers.wind_producer import WindProducer
+from producers.hydro_producer import HydroProducer
 
 RAW_DATA_PATH = "data/raw"
 
@@ -121,7 +122,7 @@ def fetch_all():
             data_file=DATA_FILES["solar"],
         )
         df_solar_production = solar_producer.load_production_data(
-            start_date=date(2022, 1, 1),  # À adapter selon vos données
+            start_date=date(2022, 1, 1),
             end_date=date.today(),
         )
         production_data["solar"] = df_solar_production
