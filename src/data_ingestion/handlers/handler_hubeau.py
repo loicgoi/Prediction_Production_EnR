@@ -1,8 +1,9 @@
 import pandas as pd
-from .etl_supabase import APIDataHandler
 import logging
-from .fetch_hubeau import get_hubeau_data
-from .data_cleaner import DataCleaner
+
+from data_ingestion.fetchers.fetch_hubeau import get_hubeau_data
+from data_ingestion.utils.data_cleaner import DataCleaner
+from .etl_supabase import APIDataHandler
 
 
 class HubeauDataHandler(APIDataHandler):
