@@ -2,23 +2,27 @@ import pytest
 import pandas as pd
 from datetime import date
 from unittest.mock import Mock, patch
-from producers.wind_producer import WindProducer
+from src.producers.wind_producer import WindProducer
 
 
 def test_wind_producer_initialization():
     """Test l'initialisation du producteur éolien."""
-    producer = WindProducer(
-        "Éolienne", "Montpellier", 100.0, "data/raw/prod_eolienne.csv"
-    )
+    with patch("src.producers.wind_producer.SupabaseHandler") as mock_handler:
+        mock_instance = Mock()
+        mock_handler.return_value = mock_instance
 
-    assert producer.name == "Éolienne"
-    assert producer.location == "Montpellier"
-    assert producer.nominal_power == 100.0
-    assert producer.data_file == "data/raw/prod_eolienne.csv"
+        producer = WindProducer(
+            "Éolienne", "Montpellier", 100.0, "data/raw/prod_eolienne.csv"
+        )
+
+        assert producer.name == "Éolienne"
+        assert producer.location == "Montpellier"
+        assert producer.nominal_power == 100.0
+        assert producer.data_file == "data/raw/prod_eolienne.csv"
 
 
-@patch("producers.wind_producer.CSVDataHandler")
-@patch("producers.wind_producer.DataCleaner")
+@patch("src.producers.wind_producer.SupabaseHandler")
+@patch("src.producers.wind_producer.DataCleaner")
 def test_wind_producer_load_data(mock_cleaner, mock_handler):
     """Test le chargement des données éoliennes."""
     mock_instance = Mock()
@@ -40,18 +44,22 @@ def test_wind_producer_load_data(mock_cleaner, mock_handler):
 
 def test_wind_producer_calculate_statistics():
     """Test le calcul des statistiques éoliennes."""
-    producer = WindProducer("Test", "Montpellier", 100.0, "test.csv")
+    with patch("src.producers.wind_producer.SupabaseHandler") as mock_handler:
+        mock_instance = Mock()
+        mock_handler.return_value = mock_instance
 
-    with patch.object(producer, "load_production_data") as mock_load:
-        mock_load.return_value = pd.DataFrame(
-            {
-                "date": [date(2024, 1, 1), date(2024, 1, 2)],
-                "production_kwh": [80.5, 75.2],
-            }
-        )
+        producer = WindProducer("Test", "Montpellier", 100.0, "test.csv")
 
-        stats = producer.calculate_statistics(date(2024, 1, 1), date(2024, 1, 2))
+        with patch.object(producer, "load_production_data") as mock_load:
+            mock_load.return_value = pd.DataFrame(
+                {
+                    "date": [date(2024, 1, 1), date(2024, 1, 2)],
+                    "production_kwh": [80.5, 75.2],
+                }
+            )
 
-        assert "total_production" in stats
-        assert "average_daily_production" in stats
-        assert stats["total_production"] == 155.7
+            stats = producer.calculate_statistics(date(2024, 1, 1), date(2024, 1, 2))
+
+            assert "total_production" in stats
+            assert "average_daily_production" in stats
+            assert stats["total_production"] == 155.7

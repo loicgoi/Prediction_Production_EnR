@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 from unittest.mock import patch, Mock
-from data_ingestion.fetchers.fetch_open_meteo_solaire import (
+from src.data_ingestion.fetchers.fetch_open_meteo_solaire import (
     get_solar_forecast,
     get_solar_history,
 )

@@ -5,72 +5,65 @@ import pandas as pd
 =======
 >>>>>>> b95c547 (restructuration des fichiers + tests fonctionnels)
 from unittest.mock import Mock, patch
+<<<<<<< HEAD
 from data_ingestion.handlers.etl_supabase import (
     DataHandler,
     CSVDataHandler,
     APIDataHandler,
 )
 <<<<<<< HEAD
+=======
+from src.data_ingestion.handlers.etl_supabase import SupabaseHandler, CSVDataHandler
+>>>>>>> 189d4b7 (màj des test + commentires code + README.md)
 
 
-class ConcreteDataHandler(DataHandler):
-    """Implémentation concrète pour tester la classe abstraite."""
+def test_supabase_handler_initialization():
+    """Test l'initialisation du SupabaseHandler."""
+    with patch("src.data_ingestion.handlers.etl_supabase.create_client") as mock_client:
+        mock_instance = Mock()
+        mock_client.return_value = mock_instance
 
-    def load(self):
-        self.df = pd.DataFrame({"col1": [1, 2], "col2": [3, 4]})
-        return self.df
+        handler = SupabaseHandler()
 
-
-def test_data_handler_initialization():
-    """Test l'initialisation du DataHandler."""
-    handler = ConcreteDataHandler()
-    assert handler.df.empty
-    assert handler.client is not None
+        assert handler.supabase is not None
+        mock_client.assert_called_once()
 
 
-def test_data_handler_infer_sql_type():
-    """Test l'inférence des types SQL."""
-    handler = ConcreteDataHandler()
+@patch("src.data_ingestion.handlers.etl_supabase.create_client")
+def test_supabase_handler_upsert_dataframe(mock_client):
+    """Test l'upsert d'un DataFrame."""
+    mock_supabase = Mock()
+    mock_client.return_value = mock_supabase
+    mock_supabase.table.return_value.insert.return_value.execute.return_value = None
 
-    assert handler._infer_sql_type(pd.Int64Dtype()) == "INTEGER"
-    assert handler._infer_sql_type(pd.Float64Dtype()) == "FLOAT"
-    assert handler._infer_sql_type(pd.BooleanDtype()) == "BOOLEAN"
-    assert handler._infer_sql_type(pd.DatetimeTZDtype(tz="UTC")) == "TIMESTAMP"
-    assert handler._infer_sql_type(pd.StringDtype()) == "TEXT"
+    handler = SupabaseHandler()
+    df = pd.DataFrame({"col1": [1, 2], "col2": [3, 4]})
+
+    handler.upsert_dataframe(df, "test_table")
+
+    mock_supabase.table.assert_called_with("test_table")
 
 
-@patch("data_ingestion.handlers.etl_supabase.os.path.exists")
-def test_csv_data_handler_load(mock_exists):
+def test_csv_data_handler_initialization():
+    """Test l'initialisation du CSVDataHandler."""
+    mock_supabase = Mock()
+    handler = CSVDataHandler(mock_supabase)
+
+    assert handler.supabase_handler == mock_supabase
+    assert handler.raw_path is not None
+
+
+@patch("pandas.read_csv")
+def test_csv_data_handler_load_csv(mock_read_csv):
     """Test le chargement des données CSV."""
-    mock_exists.return_value = True
+    mock_supabase = Mock()
+    mock_read_csv.return_value = pd.DataFrame({"test": [1, 2, 3]})
 
-    with patch("pandas.read_csv") as mock_read_csv:
-        mock_read_csv.return_value = pd.DataFrame({"test": [1, 2, 3]})
-        handler = CSVDataHandler("test.csv")
-        df = handler.load()
-
-        assert not df.empty
-        mock_read_csv.assert_called_once_with("test.csv")
-
-
-@patch("data_ingestion.handlers.etl_supabase.os.path.exists")
-def test_csv_data_handler_file_not_found(mock_exists):
-    """Test la gestion des fichiers manquants."""
-    mock_exists.return_value = False
-    handler = CSVDataHandler("nonexistent.csv")
-
-    with pytest.raises(FileNotFoundError):
-        handler.load()
-
-
-def test_api_data_handler_load():
-    """Test le chargement des données via API."""
-    mock_loader = Mock(return_value=pd.DataFrame({"api_data": [1, 2, 3]}))
-    handler = APIDataHandler(loader_function=mock_loader, param1="value1")
-
-    df = handler.load()
+    handler = CSVDataHandler(mock_supabase)
+    df = handler.load_csv("test.csv")
 
     assert not df.empty
+<<<<<<< HEAD
     mock_loader.assert_called_once_with(param1="value1")
 =======
 from unittest.mock import patch
@@ -166,3 +159,34 @@ def test_api_data_handler_load():
     assert not df.empty
     mock_loader.assert_called_once_with(param1="value1")
 >>>>>>> b95c547 (restructuration des fichiers + tests fonctionnels)
+=======
+    mock_read_csv.assert_called_once_with("test.csv")
+
+
+@patch("pandas.DataFrame.to_csv")
+def test_csv_data_handler_save_csv(mock_to_csv):
+    """Test la sauvegarde des données CSV."""
+    mock_supabase = Mock()
+    handler = CSVDataHandler(mock_supabase)
+    df = pd.DataFrame({"test": [1, 2, 3]})
+
+    handler.save_csv(df, "test.csv")
+
+    mock_to_csv.assert_called_once()
+
+
+@patch("src.data_ingestion.utils.data_cleaner.DataCleaner")
+def test_csv_data_handler_upload_to_supabase_solar(mock_cleaner):
+    """Test l'upload des données solaires vers Supabase."""
+    mock_supabase_handler = Mock()
+
+    handler = CSVDataHandler(mock_supabase_handler)
+    df = pd.DataFrame({"time": ["2024-01-01", "2024-01-02"]})
+
+    mock_cleaner.clean_solar_data.return_value = df
+
+    handler.upload_to_supabase(df, "solar_data")
+
+    mock_supabase_handler.upsert_dataframe.assert_called()
+    mock_cleaner.clean_solar_data.assert_called_once()
+>>>>>>> 189d4b7 (màj des test + commentires code + README.md)

@@ -1,4 +1,8 @@
-from data_ingestion.api.api_config import HUBEAU_CONFIG, OPEN_METEO_CONFIG, DATA_FILES
+from src.data_ingestion.api.api_config import (
+    HUBEAU_CONFIG,
+    OPEN_METEO_CONFIG,
+    DATA_FILES,
+)
 
 
 def test_hubeau_config():

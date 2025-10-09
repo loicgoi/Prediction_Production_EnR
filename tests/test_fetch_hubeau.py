@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 from unittest.mock import patch, Mock
-from data_ingestion.fetchers.fetch_hubeau import get_hubeau_data
+from src.data_ingestion.fetchers.fetch_hubeau import get_hubeau_data
 
 
 @patch("data_ingestion.fetchers.fetch_hubeau.requests.get")
