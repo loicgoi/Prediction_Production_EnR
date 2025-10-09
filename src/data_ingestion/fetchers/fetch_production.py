@@ -1,10 +1,14 @@
 import pandas as pd
 import logging
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
 from src.producers.solar_producer import SolarProducer
 from src.producers.wind_producer import WindProducer
 from src.producers.hydro_producer import HydroProducer
 from src.data_ingestion.api.api_config import DATA_FILES
+<<<<<<< HEAD
 from src.config.settings import settings
 =======
 <<<<<<<< HEAD:src/data_ingestion/fetch_production.py
@@ -18,6 +22,8 @@ from producers.solar_producer import SolarProducer
 from producers.wind_producer import WindProducer
 from producers.hydro_producer import HydroProducer
 from data_ingestion.api.api_config import DATA_FILES
+=======
+>>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
 from src.config.settings import settings
 >>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels):src/data_ingestion/fetchers/fetch_production.py
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)

@@ -2,8 +2,11 @@
 import pandas as pd
 from .base_producer import BaseProducer
 <<<<<<< HEAD
+<<<<<<< HEAD
 from src.data_ingestion.utils.data_cleaner import DataCleaner
 =======
+=======
+>>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
 from data_ingestion.handlers.etl_supabase import CSVDataHandler
 from data_ingestion.utils.data_cleaner import DataCleaner
 <<<<<<< HEAD
@@ -38,7 +41,14 @@ from data_ingestion.data_cleaner import DataCleaner
 =======
 =======
 >>>>>>> b95c547 (restructuration des fichiers + tests fonctionnels)
+<<<<<<< HEAD
 >>>>>>> 0497523 (restructuration des fichiers + tests fonctionnels)
+=======
+=======
+from src.data_ingestion.handlers.etl_supabase import SupabaseHandler
+from src.data_ingestion.utils.data_cleaner import DataCleaner
+>>>>>>> bf6ca9a (refacto code + ajout du main.py fonctionnel)
+>>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
 from datetime import date
 from typing import Dict, Any
 >>>>>>> bf9101c (refacto solar_producer)
@@ -70,6 +80,10 @@ class SolarProducer(BaseProducer):
         """
         super().__init__(name, location, nominal_power)
         self.data_file = data_file
+<<<<<<< HEAD
+=======
+        self.data_handler = SupabaseHandler(data_file)
+>>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
 
     def load_production_data(self, start_date: date, end_date: date) -> pd.DataFrame:
         """

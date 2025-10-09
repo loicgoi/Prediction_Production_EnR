@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import logging
 import pandas as pd
 from supabase import create_client, Client
@@ -111,10 +112,16 @@ import pandas as pd
 from supabase import create_client
 from src.config.settings import settings
 >>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels):src/data_ingestion/handlers/etl_supabase.py
+=======
+# src/data_ingestion/handlers/etl_supabase.py
+>>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
 import logging
-import os
-from typing import Optional, List, Dict, Any
+import pandas as pd
+from supabase import create_client, Client
+from src.config.settings import settings
+from pathlib import Path
 
+<<<<<<< HEAD
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
@@ -128,20 +135,27 @@ class DataHandler(ABC):
     def __init__(self):
         self.client = create_client(settings.supabase_url, settings.supabase_key)
         self.pd = pd.DataFrame()
+=======
+# --- CONFIGURATION SUPABASE ---
+SUPABASE_URL = settings.supabase_url
+SUPABASE_KEY = settings.supabase_key
 
-    @abstractmethod
-    def load(self) -> pd.DataFrame:
-        """
-        Charge les données et retourne un Dataframe.
-        """
-        pass
 
-    def clean(self):
-        """
-        Nettoyage optionnel des données. A redéfinir dans la sous-classe au besoin.
-        """
-        pass
+class SupabaseHandler:
+    """Gestionnaire principal de connexion à Supabase via REST API."""
 
+    def __init__(self):
+        if not SUPABASE_URL or not SUPABASE_KEY:
+            raise ValueError("SUPABASE_URL et SUPABASE_KEY doivent être fournis")
+>>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
+
+        self.supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+        logging.info("Connexion Supabase initialisée avec succès.")
+
+        # Créer les tables via l'API REST (approche simplifiée)
+        self.create_tables_simple()
+
+<<<<<<< HEAD
     def _infert_sql_type(self, pd_type):
         """
         Infère le type SQL correspondant à un type de données pandas.
@@ -269,52 +283,114 @@ class DataHandler(ABC):
         batch_size = 1000
         for i in range(0, len(records), batch_size):
             batch = records[i : i + batch_size]
+=======
+    def create_tables_simple(self):
+        """Crée les tables via des insertions initiales."""
+        # Cette approche laisse Supabase créer les tables automatiquement
+        # au premier insert. C'est plus simple et évite les problèmes de connexion.
+        logging.info("Les tables seront créées automatiquement au premier insert")
+
+    def upsert_dataframe(self, df: pd.DataFrame, table_name: str):
+        """Insère ou met à jour les données dans une table Supabase."""
+        if df.empty:
+            logging.warning(f"Le DataFrame pour {table_name} est vide, rien à insérer.")
+            return
+
+        try:
+            # Conversion des dates pour éviter les erreurs JSON
+            df = df.copy()
+            for col in df.columns:
+                if pd.api.types.is_datetime64_any_dtype(df[col]):
+                    df[col] = df[col].dt.strftime("%Y-%m-%d %H:%M:%S")
+                elif (
+                    col in ["date", "time", "date_obs_elab", "date_prod"]
+                    and df[col].dtype == "object"
+                ):
+                    # Essayer de convertir les colonnes de date string
+                    try:
+                        df[col] = pd.to_datetime(df[col]).dt.strftime("%Y-%m-%d")
+                    except:
+                        pass
+
+            data = df.to_dict(orient="records")
+
+            # Utiliser insert au lieu de upsert pour la première création
+>>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
             try:
-                self.client.table(table_name).insert(batch).execute()
+                result = self.supabase.table(table_name).insert(data).execute()
                 logging.info(
-                    f"{len(batch)} enregistrements insérés dans '{table_name}'."
+                    f"{len(df)} lignes insérées dans {table_name} (première création)."
                 )
             except Exception as e:
-                logging.error(
-                    f"Erreur lors de l'insertion du lot {i//batch_size + 1}: {e}"
-                )
-                # En cas d'erreur, tentative d'insertion individuelle pour identifier le problème
-                for record in batch:
-                    try:
-                        self.client.table(table_name).insert([record]).execute()
-                    except Exception as individual_error:
-                        logging.error(
-                            f"Erreur lors de l'insertion de l'enregistrement {record}: {individual_error}"
-                        )
+                # Si l'insert échoue, essayer upsert
+                try:
+                    result = self.supabase.table(table_name).upsert(data).execute()
+                    logging.info(f"{len(df)} lignes upsertées dans {table_name}.")
+                except Exception as e2:
+                    logging.error(
+                        f"Erreur lors de l'insertion dans {table_name} : {e2}"
+                    )
+
+        except Exception as e:
+            logging.error(
+                f"Erreur lors du traitement des données pour {table_name} : {e}"
+            )
 
 
-class CSVDataHandler(DataHandler):
-    """
-    Gestionnaire pour charger des CSV locaux.
-    """
+# --- HANDLER POUR LES CSV LOCAUX ---
+class CSVDataHandler:
+    """Gère le chargement, le nettoyage et l'envoi vers Supabase des CSV."""
 
-    def __init__(self, file_path: str):
-        super().__init__()
-        self.file_path = file_path
+    def __init__(self, supabase_handler: SupabaseHandler):
+        self.supabase_handler = supabase_handler
+        self.raw_path = Path(settings.data_raw_path)
+        self.raw_path.mkdir(parents=True, exist_ok=True)
 
-    def load(self) -> pd.DataFrame:
-        if not os.path.exists(self.file_path):
-            raise FileNotFoundError(f"Le fichier {self.file_path} n'existe pas.")
-        self.df = pd.read_csv(self.file_path)
-        return self.df
+    def load_csv(self, file_path: str) -> pd.DataFrame:
+        """Charge un CSV et renvoie un DataFrame."""
+        try:
+            df = pd.read_csv(file_path)
+            logging.info(f"{len(df)} enregistrements chargés depuis {file_path}")
+            return df
+        except Exception as e:
+            logging.error(f"Erreur lors du chargement du CSV {file_path}: {e}")
+            return pd.DataFrame()
 
+    def save_csv(self, df: pd.DataFrame, file_name: str):
+        """Sauvegarde un DataFrame dans le dossier local data/raw."""
+        try:
+            path = self.raw_path / file_name
+            df.to_csv(path, index=False)
+            logging.info(f"CSV sauvegardé : {path}")
+        except Exception as e:
+            logging.error(f"Erreur lors de la sauvegarde du CSV {file_name}: {e}")
 
-class APIDataHandler(DataHandler):
-    """
-    Gestionnaire pour charger des données via API.
-    """
+    def upload_to_supabase(self, df: pd.DataFrame, table_prefix: str):
+        """Insère les données dans Supabase (raw + clean)."""
+        try:
+            from src.data_ingestion.utils.data_cleaner import DataCleaner
 
-    def __init__(self, loader_function, **kwargs):
-        super().__init__()
-        self.loader_function = loader_function
-        self.loader_kwargs = kwargs
+            # Upload des données brutes
+            self.supabase_handler.upsert_dataframe(df, f"raw_{table_prefix}")
 
+<<<<<<< HEAD
     def load(self) -> pd.DataFrame:
         self.df = self.loader_function(**self.loader_kwargs)
         return self.df
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+            # Nettoyage et upload des données nettoyées
+            if "solar" in table_prefix:
+                df_clean = DataCleaner.clean_solar_data(df)
+            elif "wind" in table_prefix:
+                df_clean = DataCleaner.clean_wind_data(df)
+            elif "hydro" in table_prefix or "hubeau" in table_prefix:
+                df_clean = DataCleaner.clean_hydro_data(df)
+            else:
+                df_clean = df.copy()
+
+            self.supabase_handler.upsert_dataframe(df_clean, f"clean_{table_prefix}")
+
+        except Exception as e:
+            logging.error(f"Erreur lors de l'upload Supabase {table_prefix}: {e}")
+>>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)

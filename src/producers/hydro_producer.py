@@ -7,6 +7,7 @@ from .base_producer import BaseProducer
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 from src.data_ingestion.utils.data_cleaner import DataCleaner
 =======
 from ..data_ingestion.etl_supabase import CSVDataHandler
@@ -42,6 +43,11 @@ from data_ingestion.handlers.etl_supabase import CSVDataHandler
 from data_ingestion.utils.data_cleaner import DataCleaner
 >>>>>>> b95c547 (restructuration des fichiers + tests fonctionnels)
 >>>>>>> 0497523 (restructuration des fichiers + tests fonctionnels)
+=======
+
+from data_ingestion.handlers.etl_supabase import CSVDataHandler
+from data_ingestion.utils.data_cleaner import DataCleaner
+>>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
 
 
 class HydroProducer(BaseProducer):
@@ -56,9 +62,13 @@ class HydroProducer(BaseProducer):
         super().__init__(name, location, nominal_power)
         self.data_file = data_file
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         self.data_handler = CSVDataHandler(data_file)
 >>>>>>> cbfd918 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
+=======
+        self.data_handler = SupabaseHandler(data_file)
+>>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
 
     def load_production_data(self, start_date: date, end_date: date) -> pd.DataFrame:
         """
