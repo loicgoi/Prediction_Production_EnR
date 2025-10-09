@@ -1,7 +1,6 @@
 # Prediction Production Énergies Renouvelables  
 ### Système de prédiction de production d'énergie solaire, éolienne et hydraulique
 
-![tests](https://img.shields.io/badge/tests-57%2520passed-brightgreen)
 ![python](https://img.shields.io/badge/python-3.13-blue)
 ![architecture](https://img.shields.io/badge/architecture-modulaire-orange)
 
