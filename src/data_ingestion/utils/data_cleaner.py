@@ -56,7 +56,7 @@ class DataCleaner:
 
         # Conversion datetime
         if "date" in df_clean.columns:
-            df_clean["date"] = pd.to_datetime(df_clean["date"]).dt.date
+            df_clean["date"] = pd.to_datetime(df_clean["date"])
 
         # Suppression des doublons
         df_clean = DataCleaner._remove_duplicates(df_clean, "date")
@@ -86,7 +86,7 @@ class DataCleaner:
 
         # Conversion des types
         if "date" in df_clean.columns:
-            df_clean["date"] = pd.to_datetime(df_clean["date"]).dt.date
+            df_clean["date"] = pd.to_datetime(df_clean["date"])
 
         if "debit_l_s" in df_clean.columns:
             df_clean["debit_l_s"] = pd.to_numeric(

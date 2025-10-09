@@ -21,9 +21,7 @@ def fetch_all(
     # Initialiser SupabaseHandler
     supabase_handler = SupabaseHandler()
 
-    # -------------------------
     # Données API météo
-    # -------------------------
     solar_handler = WeatherDataHandler(
         latitude=latitude, longitude=longitude, data_type="solar"
     )
@@ -43,9 +41,7 @@ def fetch_all(
         start_date="2016-09-01", end_date=today.strftime("%Y-%m-%d"), forecast=False
     )
 
-    # -------------------------
     # Données API Hub'Eau
-    # -------------------------
     hubeau_handler = HubeauDataHandler(
         code_station=hubeau_station,
         start_date="2022-07-01",
@@ -55,9 +51,7 @@ def fetch_all(
     if not df_hydro.empty:
         hubeau_handler.clean()
 
-    # -------------------------
     # Données CSV locales
-    # -------------------------
     data_raw_path = settings.data_raw_path
     prod_solar_csv = os.path.join(data_raw_path, "prod_solaire.csv")
     prod_wind_csv = os.path.join(data_raw_path, "prod_eolienne.csv")
@@ -77,9 +71,7 @@ def fetch_all(
         else pd.DataFrame()
     )
 
-    # -------------------------
     # Pousser tout dans Supabase
-    # -------------------------
     csv_handler = CSVDataHandler(supabase_handler)
 
     # Préparer les données pour le retour

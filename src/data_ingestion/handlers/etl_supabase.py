@@ -1,11 +1,10 @@
-# src/data_ingestion/handlers/etl_supabase.py
 import logging
 import pandas as pd
 from supabase import create_client, Client
 from src.config.settings import settings
 from pathlib import Path
 
-# --- CONFIGURATION SUPABASE ---
+# CONFIGURATION SUPABASE
 SUPABASE_URL = settings.supabase_url
 SUPABASE_KEY = settings.supabase_key
 
@@ -20,13 +19,11 @@ class SupabaseHandler:
         self.supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
         logging.info("Connexion Supabase initialisée avec succès.")
 
-        # Créer les tables via l'API REST (approche simplifiée)
+        # Créer les tables via l'API REST
         self.create_tables_simple()
 
     def create_tables_simple(self):
         """Crée les tables via des insertions initiales."""
-        # Cette approche laisse Supabase créer les tables automatiquement
-        # au premier insert. C'est plus simple et évite les problèmes de connexion.
         logging.info("Les tables seront créées automatiquement au premier insert")
 
     def upsert_dataframe(self, df: pd.DataFrame, table_name: str):
@@ -53,14 +50,14 @@ class SupabaseHandler:
 
             data = df.to_dict(orient="records")
 
-            # Utiliser insert au lieu de upsert pour la première création
+            # Utilisation de insert pour la première création
             try:
                 result = self.supabase.table(table_name).insert(data).execute()
                 logging.info(
                     f"{len(df)} lignes insérées dans {table_name} (première création)."
                 )
             except Exception as e:
-                # Si l'insert échoue, essayer upsert
+                # Si l'insert échoue, on essaye upsert
                 try:
                     result = self.supabase.table(table_name).upsert(data).execute()
                     logging.info(f"{len(df)} lignes upsertées dans {table_name}.")
@@ -75,7 +72,7 @@ class SupabaseHandler:
             )
 
 
-# --- HANDLER POUR LES CSV LOCAUX ---
+# HANDLER POUR LES CSV LOCAUX
 class CSVDataHandler:
     """Gère le chargement, le nettoyage et l'envoi vers Supabase des CSV."""
 

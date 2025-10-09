@@ -4,7 +4,7 @@ from sqlalchemy.orm import declarative_base
 Base = declarative_base()
 
 
-# ---------------- Raw / Clean Hubeau ----------------
+# Raw / Clean Hubeau
 class RawHubeau(Base):
     __tablename__ = "raw_hubeau"
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -43,7 +43,7 @@ class CleanHubeau(Base):
     code_site = Column(String)
 
 
-# ---------------- Raw / Clean Solar ----------------
+# Raw / Clean Solar
 class RawSolar(Base):
     __tablename__ = "raw_solar_history"
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -100,7 +100,7 @@ class CleanSolar(Base):
     daylight_duration = Column(Float)
 
 
-# ---------------- Raw / Clean Wind ----------------
+# Raw / Clean Wind
 class RawWind(Base):
     __tablename__ = "raw_wind_history"
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -129,7 +129,7 @@ class CleanWind(Base):
     cloud_cover_mean = Column(Float)
 
 
-# ---------------- Raw / Clean Production ----------------
+# Raw / Clean Production
 class RawProdSolar(Base):
     __tablename__ = "raw_prod_solaire"
     id = Column(Integer, primary_key=True, autoincrement=True)

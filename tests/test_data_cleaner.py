@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from data_ingestion.utils.data_cleaner import DataCleaner
+from src.data_ingestion.utils.data_cleaner import DataCleaner
 
 
 def test_clean_solar_data():
