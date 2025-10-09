@@ -3,24 +3,33 @@ import pandas as pd
 from datetime import date
 from unittest.mock import Mock, patch
 <<<<<<< HEAD
+<<<<<<< HEAD
 from src.producers.solar_producer import SolarProducer
 =======
 from producers.solar_producer import SolarProducer
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+from src.producers.solar_producer import SolarProducer
+>>>>>>> 5594093 (màj des test + commentires code + README.md)
 
 
 def test_solar_producer_initialization():
     """Test l'initialisation du producteur solaire."""
-    producer = SolarProducer(
-        "Parc solaire", "Montpellier", 150.0, "data/raw/prod_solaire.csv"
-    )
+    with patch("src.producers.solar_producer.SupabaseHandler") as mock_handler:
+        mock_instance = Mock()
+        mock_handler.return_value = mock_instance
 
-    assert producer.name == "Parc solaire"
-    assert producer.location == "Montpellier"
-    assert producer.nominal_power == 150.0
-    assert producer.data_file == "data/raw/prod_solaire.csv"
+        producer = SolarProducer(
+            "Parc solaire", "Montpellier", 150.0, "data/raw/prod_solaire.csv"
+        )
+
+        assert producer.name == "Parc solaire"
+        assert producer.location == "Montpellier"
+        assert producer.nominal_power == 150.0
+        assert producer.data_file == "data/raw/prod_solaire.csv"
 
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 @patch("pandas.read_csv")
 @patch("src.producers.solar_producer.DataCleaner")
@@ -43,6 +52,10 @@ def test_solar_producer_load_data_success(mock_cleaner, mock_read_csv):
 =======
 @patch("producers.solar_producer.CSVDataHandler")
 @patch("producers.solar_producer.DataCleaner")
+=======
+@patch("src.producers.solar_producer.SupabaseHandler")
+@patch("src.producers.solar_producer.DataCleaner")
+>>>>>>> 5594093 (màj des test + commentires code + README.md)
 def test_solar_producer_load_data(mock_cleaner, mock_handler):
     """Test le chargement des données solaires."""
     # Mock du handler
@@ -103,8 +116,11 @@ def test_solar_producer_load_data_empty_file(mock_cleaner, mock_read_csv):
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
 def test_solar_producer_calculate_statistics():
     """Test le calcul des statistiques solaires."""
-    producer = SolarProducer("Test", "Montpellier", 150.0, "test.csv")
+    with patch("src.producers.solar_producer.SupabaseHandler") as mock_handler:
+        mock_instance = Mock()
+        mock_handler.return_value = mock_instance
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
     # Mock de load_production_data
@@ -116,9 +132,20 @@ def test_solar_producer_calculate_statistics():
                 "production_kwh": [150.5, 160.2],
             }
         )
+=======
+        producer = SolarProducer("Test", "Montpellier", 150.0, "test.csv")
+>>>>>>> 5594093 (màj des test + commentires code + README.md)
 
-        stats = producer.calculate_statistics(date(2024, 1, 1), date(2024, 1, 2))
+        # Mock de load_production_data
+        with patch.object(producer, "load_production_data") as mock_load:
+            mock_load.return_value = pd.DataFrame(
+                {
+                    "date": [date(2024, 1, 1), date(2024, 1, 2)],
+                    "production_kwh": [150.5, 160.2],
+                }
+            )
 
+<<<<<<< HEAD
         assert "total_production" in stats
         assert "average_daily_production" in stats
 <<<<<<< HEAD
@@ -136,18 +163,29 @@ def test_solar_producer_calculate_statistics_empty_data():
 =======
         assert "capacity_factor" in stats
         assert stats["total_production"] == 310.7
+=======
+            stats = producer.calculate_statistics(date(2024, 1, 1), date(2024, 1, 2))
+
+            assert "total_production" in stats
+            assert "average_daily_production" in stats
+            assert "capacity_factor" in stats
+            assert stats["total_production"] == 310.7
+>>>>>>> 5594093 (màj des test + commentires code + README.md)
 
 
 def test_solar_producer_statistics_empty_data():
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
     """Test les statistiques avec données vides."""
-    producer = SolarProducer("Test", "Montpellier", 150.0, "test.csv")
+    with patch("src.producers.solar_producer.SupabaseHandler") as mock_handler:
+        mock_instance = Mock()
+        mock_handler.return_value = mock_instance
 
-    with patch.object(producer, "load_production_data") as mock_load:
-        mock_load.return_value = pd.DataFrame()
+        producer = SolarProducer("Test", "Montpellier", 150.0, "test.csv")
 
-        stats = producer.calculate_statistics(date(2024, 1, 1), date(2024, 1, 2))
+        with patch.object(producer, "load_production_data") as mock_load:
+            mock_load.return_value = pd.DataFrame()
 
+<<<<<<< HEAD
         assert stats["total_production"] == 0
 <<<<<<< HEAD
         assert stats["average_daily_production"] == 0
@@ -195,3 +233,9 @@ def test_solar_producer_capacity_factor_empty_data():
 =======
         assert stats["capacity_factor"] == 0.0
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+            stats = producer.calculate_statistics(date(2024, 1, 1), date(2024, 1, 2))
+
+            assert stats["total_production"] == 0
+            assert stats["capacity_factor"] == 0.0
+>>>>>>> 5594093 (màj des test + commentires code + README.md)

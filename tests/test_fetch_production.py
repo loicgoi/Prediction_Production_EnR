@@ -92,6 +92,44 @@ def test_fetch_production_data_hydro(mock_hydro_producer):
 
     df = fetch_production_data("hydro")
 
+
+        with pytest.raises(ValueError):
+            fetch_production_data("invalid_type")
+
+    @patch("data_ingestion.fetch_production.SolarProducer")
+    def test_fetch_production_with_dates(
+        self, mock_solar_producer, mock_production_data
+    ):
+        from data_ingestion.fetch_production import fetch_production_data
+
+        # Mock SolarProducer
+        mock_instance = MagicMock()
+        mock_instance.load_production_data.return_value = mock_production_data
+        mock_solar_producer.return_value = mock_instance
+
+        start_date = date(2024, 1, 1)
+        end_date = date(2024, 1, 5)
+
+        result = fetch_production_data("solar", start_date, end_date)
+
+        assert not result.empty
+        # Vérifier que les dates sont passées au producer
+        mock_instance.load_production_data.assert_called_once()
+
+    @patch("data_ingestion.fetch_production.SolarProducer")
+    def test_fetch_production_empty_result(self, mock_solar_producer):
+        from data_ingestion.fetch_production import fetch_production_data
+
+        # Mock empty result
+        mock_instance = MagicMock()
+        mock_instance.load_production_data.return_value = pd.DataFrame()
+        mock_solar_producer.return_value = mock_instance
+
+        result = fetch_production_data("solar")
+
+        assert result.empty
+>>>>>>> 3c7ab3c (réalisation des tests + correction erreurs d'import)
+=======
     assert isinstance(df, pd.DataFrame)
     mock_hydro_producer.assert_called_once()
 <<<<<<< HEAD

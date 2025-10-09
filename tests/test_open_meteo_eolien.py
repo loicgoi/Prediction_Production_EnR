@@ -2,10 +2,14 @@ import pytest
 import pandas as pd
 from unittest.mock import patch, Mock
 <<<<<<< HEAD
+<<<<<<< HEAD
 from src.data_ingestion.fetchers.fetch_open_meteo_eolien import (
 =======
 from data_ingestion.fetchers.fetch_open_meteo_eolien import (
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+from src.data_ingestion.fetchers.fetch_open_meteo_eolien import (
+>>>>>>> 5594093 (màj des test + commentires code + README.md)
     get_wind_forecast,
     get_wind_history,
 )

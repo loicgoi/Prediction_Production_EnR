@@ -2,12 +2,16 @@ import pytest
 import pandas as pd
 from unittest.mock import patch, Mock
 <<<<<<< HEAD
+<<<<<<< HEAD
 from src.data_ingestion.fetchers.fetch_hubeau import get_hubeau_data
 
 
 @patch("src.data_ingestion.fetchers.fetch_hubeau.requests.get")
 =======
 from data_ingestion.fetchers.fetch_hubeau import get_hubeau_data
+=======
+from src.data_ingestion.fetchers.fetch_hubeau import get_hubeau_data
+>>>>>>> 5594093 (màj des test + commentires code + README.md)
 
 
 @patch("data_ingestion.fetchers.fetch_hubeau.requests.get")

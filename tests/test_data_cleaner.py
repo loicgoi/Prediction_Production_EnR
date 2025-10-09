@@ -2,10 +2,14 @@ import pytest
 import pandas as pd
 import numpy as np
 <<<<<<< HEAD
+<<<<<<< HEAD
 from src.data_ingestion.utils.data_cleaner import DataCleaner
 =======
 from data_ingestion.utils.data_cleaner import DataCleaner
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+from src.data_ingestion.utils.data_cleaner import DataCleaner
+>>>>>>> 5594093 (màj des test + commentires code + README.md)
 
 
 def test_clean_solar_data():

@@ -1,5 +1,8 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 5594093 (màj des test + commentires code + README.md)
 import logging
 import pandas as pd
 from supabase import create_client, Client
@@ -20,6 +23,7 @@ class SupabaseHandler:
         self.supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
         logging.info("Connexion Supabase initialisée avec succès.")
 
+<<<<<<< HEAD
     def upsert_dataframe(self, df: pd.DataFrame, table_name: str):
         """Insère ou met à jour les données dans une table Supabase."""
         if df.empty:
@@ -153,6 +157,9 @@ class SupabaseHandler:
         logging.info("Connexion Supabase initialisée avec succès.")
 
         # Créer les tables via l'API REST (approche simplifiée)
+=======
+        # Créer les tables via l'API REST
+>>>>>>> 5594093 (màj des test + commentires code + README.md)
         self.create_tables_simple()
 
 <<<<<<< HEAD
@@ -286,8 +293,6 @@ class SupabaseHandler:
 =======
     def create_tables_simple(self):
         """Crée les tables via des insertions initiales."""
-        # Cette approche laisse Supabase créer les tables automatiquement
-        # au premier insert. C'est plus simple et évite les problèmes de connexion.
         logging.info("Les tables seront créées automatiquement au premier insert")
 
     def upsert_dataframe(self, df: pd.DataFrame, table_name: str):
@@ -314,15 +319,19 @@ class SupabaseHandler:
 
             data = df.to_dict(orient="records")
 
+<<<<<<< HEAD
             # Utiliser insert au lieu de upsert pour la première création
 >>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
+=======
+            # Utilisation de insert pour la première création
+>>>>>>> 5594093 (màj des test + commentires code + README.md)
             try:
                 result = self.supabase.table(table_name).insert(data).execute()
                 logging.info(
                     f"{len(df)} lignes insérées dans {table_name} (première création)."
                 )
             except Exception as e:
-                # Si l'insert échoue, essayer upsert
+                # Si l'insert échoue, on essaye upsert
                 try:
                     result = self.supabase.table(table_name).upsert(data).execute()
                     logging.info(f"{len(df)} lignes upsertées dans {table_name}.")
@@ -337,7 +346,7 @@ class SupabaseHandler:
             )
 
 
-# --- HANDLER POUR LES CSV LOCAUX ---
+# HANDLER POUR LES CSV LOCAUX
 class CSVDataHandler:
     """Gère le chargement, le nettoyage et l'envoi vers Supabase des CSV."""
 
