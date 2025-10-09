@@ -2,23 +2,9 @@ from datetime import date
 import pandas as pd
 from typing import Dict, Any
 from .base_producer import BaseProducer
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 from data_ingestion.handlers.etl_supabase import CSVDataHandler
 from data_ingestion.utils.data_cleaner import DataCleaner
-=======
-from ..data_ingestion.etl_supabase import CSVDataHandler
-from ..data_ingestion.data_cleaner import DataCleaner
->>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
-=======
-from data_ingestion.etl_supabase import CSVDataHandler
-from data_ingestion.data_cleaner import DataCleaner
->>>>>>> 3c7ab3c (réalisation des tests + correction erreurs d'import)
-=======
-from data_ingestion.handlers.etl_supabase import CSVDataHandler
-from data_ingestion.utils.data_cleaner import DataCleaner
->>>>>>> b95c547 (restructuration des fichiers + tests fonctionnels)
 
 
 class HydroProducer(BaseProducer):
@@ -32,7 +18,7 @@ class HydroProducer(BaseProducer):
         """
         super().__init__(name, location, nominal_power)
         self.data_file = data_file
-        self.data_handler = CSVDataHandler(data_file)
+        self.data_handler = SupabaseHandler(data_file)
 
     def load_production_data(self, start_date: date, end_date: date) -> pd.DataFrame:
         """

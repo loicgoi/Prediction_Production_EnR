@@ -125,7 +125,7 @@ class DataCleaner:
 
         # Conversion des types
         if "date" in df_clean.columns:
-            df_clean["date"] = pd.to_datetime(df_clean["date"]).dt.date
+            df_clean["date"] = pd.to_datetime(df_clean["date"])
 
         if "production_kwh" in df_clean.columns:
             df_clean["production_kwh"] = pd.to_numeric(
