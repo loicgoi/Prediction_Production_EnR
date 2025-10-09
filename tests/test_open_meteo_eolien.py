@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 from unittest.mock import patch, Mock
-from data_ingestion.fetchers.fetch_open_meteo_eolien import (
+from src.data_ingestion.fetchers.fetch_open_meteo_eolien import (
     get_wind_forecast,
     get_wind_history,
 )

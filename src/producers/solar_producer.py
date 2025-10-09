@@ -1,7 +1,7 @@
 import pandas as pd
 from .base_producer import BaseProducer
-from data_ingestion.handlers.etl_supabase import CSVDataHandler
-from data_ingestion.utils.data_cleaner import DataCleaner
+from src.data_ingestion.handlers.etl_supabase import SupabaseHandler
+from src.data_ingestion.utils.data_cleaner import DataCleaner
 from datetime import date
 from typing import Dict, Any
 
@@ -23,7 +23,7 @@ class SolarProducer(BaseProducer):
         """
         super().__init__(name, location, nominal_power)
         self.data_file = data_file
-        self.data_handler = CSVDataHandler(data_file)
+        self.data_handler = SupabaseHandler(data_file)
 
     def load_production_data(self, start_date: date, end_date: date) -> pd.DataFrame:
         """
