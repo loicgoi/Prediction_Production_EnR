@@ -14,9 +14,7 @@
 - [Utilisation](#-utilisation)
 - [Tests](#-tests)
 - [Développement](#-développement)
-- [Contribution](#-contribution)
 - [Licence](#-licence)
-- [Support](#-support)
 
 ---
 
