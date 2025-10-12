@@ -12,7 +12,7 @@ def get_solar_forecast(
     params = {
         "latitude": latitude,
         "longitude": longitude,
-        "daily": "shortwave_radiation_sum,cloud_cover_mean,precipitation_sum,temperature_2m_max,temperature_2m_min,relative_humidity_2m_mean,wind_speed_10m_mean",
+        "daily": "temperature_2m_max,temperature_2m_min,temperature_2m_mean,shortwave_radiation_sum,sunshine_duration,daylight_duration,cloud_cover_mean,relative_humidity_2m_mean,precipitation_sum,wind_speed_10m_mean",
         "timezone": "Europe/Paris",
         "forecast_days": 16,
     }
@@ -40,7 +40,7 @@ def get_solar_history(
         "longitude": longitude,
         "start_date": start_date,
         "end_date": end_date,
-        "daily": "shortwave_radiation_sum,cloud_cover_mean,precipitation_sum,temperature_2m_max,temperature_2m_min,relative_humidity_2m_mean,wind_speed_10m_mean",
+        "daily": "temperature_2m_max,temperature_2m_min,temperature_2m_mean,shortwave_radiation_sum,sunshine_duration,daylight_duration,cloud_cover_mean,relative_humidity_2m_mean,precipitation_sum,wind_speed_10m_mean",
         "timezone": "Europe/Paris",
     }
 
