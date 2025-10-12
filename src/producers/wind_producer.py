@@ -8,6 +8,7 @@ from .base_producer import BaseProducer
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 from src.data_ingestion.utils.data_cleaner import DataCleaner
 =======
 from ..data_ingestion.etl_supabase import CSVDataHandler
@@ -24,6 +25,8 @@ from data_ingestion.utils.data_cleaner import DataCleaner
 >>>>>>> 0497523 (restructuration des fichiers + tests fonctionnels)
 =======
 >>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
+=======
+>>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
 from data_ingestion.handlers.etl_supabase import CSVDataHandler
 from data_ingestion.utils.data_cleaner import DataCleaner
 =======
@@ -49,6 +52,8 @@ from data_ingestion.utils.data_cleaner import DataCleaner
 =======
 =======
 from src.data_ingestion.handlers.etl_supabase import SupabaseHandler
+=======
+>>>>>>> a01c904 (correction problème de double import dans supabase + correction dans la séparation raw / clean)
 from src.data_ingestion.utils.data_cleaner import DataCleaner
 >>>>>>> bf6ca9a (refacto code + ajout du main.py fonctionnel)
 >>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
@@ -67,12 +72,15 @@ class WindProducer(BaseProducer):
         self.data_file = data_file
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         self.data_handler = CSVDataHandler(data_file)
 >>>>>>> cbfd918 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
 =======
         self.data_handler = SupabaseHandler(data_file)
 >>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
+=======
+>>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
 
     def load_production_data(self, start_date: date, end_date: date) -> pd.DataFrame:
         """
@@ -80,11 +88,16 @@ class WindProducer(BaseProducer):
         """
         try:
 <<<<<<< HEAD
+<<<<<<< HEAD
             # Charger directement avec pandas
             df = pd.read_csv(self.data_file)
 =======
             df = self.data_handler.load()
 >>>>>>> cbfd918 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
+=======
+            # Charger directement avec pandas
+            df = pd.read_csv(self.data_file)
+>>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
 
             # Nettoyage spécifique aux données de production éolienne
             df = DataCleaner.clean_production_data(df, "wind")

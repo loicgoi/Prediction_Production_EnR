@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 import logging
 import os
 import pandas as pd
@@ -192,21 +191,7 @@ def fetch_all(
 
     logging.info("Récupération et insertion terminées")
     return results
-=======
-<<<<<<<< HEAD:src/data_ingestion/fetch_all.py
-from .handler_hubeau import HubeauDataHandler
-from .handler_meteo import WeatherDataHandler
-from ..producers.solar_producer import SolarProducer
-from ..producers.wind_producer import WindProducer
-from ..producers.hydro_producer import HydroProducer
-from ..data_ingestion import DataCleaner
-from ..config.settings import settings
-from .api_config import DATA_FILES
-========
->>>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels):src/data_ingestion/fetchers/fetch_all.py
-=======
-import logging
->>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
+
 import os
 import pandas as pd
 from src.data_ingestion.handlers.handler_meteo import WeatherDataHandler
@@ -226,8 +211,9 @@ def fetch_all(
 
     logging.info("Début de la récupération des données")
 
-    # Initialiser SupabaseHandler
+    # Initialiser SupabaseHandler et DataUploader
     supabase_handler = SupabaseHandler()
+    data_uploader = DataUploader(supabase_handler)
 
     # Données API météo
     solar_handler = WeatherDataHandler(
@@ -279,8 +265,70 @@ def fetch_all(
         else pd.DataFrame()
     )
 
-    # Pousser tout dans Supabase
-    csv_handler = CSVDataHandler(supabase_handler)
+    # UPLOAD VERS SUPABASE - AVEC SÉPARATION STRICTE RAW/CLEAN
+    try:
+        # Données météo SOLAIRES
+        if not solar_forecast.empty:
+            # Données brutes SANS AUCUNE conversion
+            solar_forecast_raw = DataCleaner.prepare_solar_data_raw(solar_forecast)
+            data_uploader.upload_raw_dataset(solar_forecast_raw, "solar_forecast")
+            # Données clean AVEC conversions
+            solar_forecast_clean = DataCleaner.clean_solar_data(solar_forecast)
+            data_uploader.upload_clean_dataset(solar_forecast_clean, "solar_forecast")
+
+        if not solar_history.empty:
+            solar_history_raw = DataCleaner.prepare_solar_data_raw(solar_history)
+            data_uploader.upload_raw_dataset(solar_history_raw, "solar_history")
+            solar_history_clean = DataCleaner.clean_solar_data(solar_history)
+            data_uploader.upload_clean_dataset(solar_history_clean, "solar_history")
+
+        # Données météo ÉOLIENNES
+        if not wind_forecast.empty:
+            wind_forecast_raw = DataCleaner.prepare_wind_data_raw(wind_forecast)
+            data_uploader.upload_raw_dataset(wind_forecast_raw, "wind_forecast")
+            wind_forecast_clean = DataCleaner.clean_wind_data(wind_forecast)
+            data_uploader.upload_clean_dataset(wind_forecast_clean, "wind_forecast")
+
+        if not wind_history.empty:
+            wind_history_raw = DataCleaner.prepare_wind_data_raw(wind_history)
+            data_uploader.upload_raw_dataset(wind_history_raw, "wind_history")
+            wind_history_clean = DataCleaner.clean_wind_data(wind_history)
+            data_uploader.upload_clean_dataset(wind_history_clean, "wind_history")
+
+        # Données Hub'Eau
+        if not df_hydro.empty:
+            hubeau_raw = DataCleaner.prepare_hydro_data_raw(df_hydro)
+            data_uploader.upload_raw_dataset(hubeau_raw, "hubeau")
+            hubeau_clean = DataCleaner.clean_hydro_data(df_hydro)
+            data_uploader.upload_clean_dataset(hubeau_clean, "hubeau")
+
+        # Données de production
+        if not df_solar_prod.empty:
+            solar_prod_raw = DataCleaner.prepare_production_data_raw(
+                df_solar_prod, "solar"
+            )
+            data_uploader.upload_raw_dataset(solar_prod_raw, "prod_solaire")
+            solar_prod_clean = DataCleaner.clean_production_data(df_solar_prod, "solar")
+            data_uploader.upload_clean_dataset(solar_prod_clean, "prod_solaire")
+
+        if not df_wind_prod.empty:
+            wind_prod_raw = DataCleaner.prepare_production_data_raw(
+                df_wind_prod, "wind"
+            )
+            data_uploader.upload_raw_dataset(wind_prod_raw, "prod_eolienne")
+            wind_prod_clean = DataCleaner.clean_production_data(df_wind_prod, "wind")
+            data_uploader.upload_clean_dataset(wind_prod_clean, "prod_eolienne")
+
+        if not df_hydro_prod.empty:
+            hydro_prod_raw = DataCleaner.prepare_production_data_raw(
+                df_hydro_prod, "hydro"
+            )
+            data_uploader.upload_raw_dataset(hydro_prod_raw, "prod_hydro")
+            hydro_prod_clean = DataCleaner.clean_production_data(df_hydro_prod, "hydro")
+            data_uploader.upload_clean_dataset(hydro_prod_clean, "prod_hydro")
+
+    except Exception as e:
+        logging.error(f"Erreur lors de l'upload Supabase: {e}")
 
     # Préparer les données pour le retour
     results = {
@@ -289,40 +337,14 @@ def fetch_all(
         "solar_history": solar_history,
         "wind_forecast": wind_forecast,
         "wind_history": wind_history,
-        "solar_production": df_solar_prod,
-        "wind_production": df_wind_prod,
-        "hydro_production": df_hydro_prod,
+        "prod_solaire": df_solar_prod,
+        "prod_eolienne": df_wind_prod,
+        "prod_hydro": df_hydro_prod,
     }
 
-    # Upload vers Supabase
-    try:
-        if not df_hydro.empty:
-            csv_handler.upload_to_supabase(df_hydro, "hubeau")
-        if not solar_forecast.empty:
-            csv_handler.upload_to_supabase(solar_forecast, "solar_forecast")
-        if not solar_history.empty:
-            csv_handler.upload_to_supabase(solar_history, "solar_history")
-        if not wind_forecast.empty:
-            csv_handler.upload_to_supabase(wind_forecast, "wind_forecast")
-        if not wind_history.empty:
-            csv_handler.upload_to_supabase(wind_history, "wind_history")
-        if not df_solar_prod.empty:
-            csv_handler.upload_to_supabase(df_solar_prod, "prod_solaire")
-        if not df_wind_prod.empty:
-            csv_handler.upload_to_supabase(df_wind_prod, "prod_eolienne")
-        if not df_hydro_prod.empty:
-            csv_handler.upload_to_supabase(df_hydro_prod, "prod_hydro")
-    except Exception as e:
-<<<<<<< HEAD
-        logging.error(
-            f"Erreur lors de la récupération des données météorologiques {data_type}: {e}"
-        )
-        return pd.DataFrame()
->>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
-=======
-        logging.error(f"Erreur lors de l'upload Supabase: {e}")
 
-    logging.info("Récupération et insertion terminées")
 
+logging.error(f"Erreur lors de l'upload Supabase: {e}")
+
+logging.info("Récupération et insertion terminées")
     return results
->>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)

@@ -22,7 +22,11 @@ def get_wind_forecast(
         "longitude": longitude,
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         "daily": "wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,wind_gusts_10m_mean,temperature_2m_mean,surface_pressure_mean,cloud_cover_mean",
+=======
+        "daily": "wind_speed_10m_max,wind_speed_10m_mean,wind_gusts_10m_max,wind_direction_10m_dominant,wind_gusts_10m_mean,temperature_2m_mean,surface_pressure_mean,cloud_cover_mean",
+>>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
         "timezone": "Europe/Paris",
         "forecast_days": 16,
     }
@@ -85,7 +89,11 @@ def get_wind_history(
         "end_date": end_date,
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         "daily": "wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,wind_gusts_10m_mean,temperature_2m_mean,surface_pressure_mean,cloud_cover_mean",
+=======
+        "daily": "wind_speed_10m_max,wind_speed_10m_mean,wind_gusts_10m_max,wind_direction_10m_dominant,wind_gusts_10m_mean,temperature_2m_mean,surface_pressure_mean,cloud_cover_mean",
+>>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
         "timezone": "Europe/Paris",
     }
 

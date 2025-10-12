@@ -24,6 +24,7 @@ class SupabaseHandler:
         logging.info("Connexion Supabase initialisée avec succès.")
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     def upsert_dataframe(self, df: pd.DataFrame, table_name: str):
         """Insère ou met à jour les données dans une table Supabase."""
         if df.empty:
@@ -295,6 +296,8 @@ class SupabaseHandler:
         """Crée les tables via des insertions initiales."""
         logging.info("Les tables seront créées automatiquement au premier insert")
 
+=======
+>>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
     def upsert_dataframe(self, df: pd.DataFrame, table_name: str):
         """Insère ou met à jour les données dans une table Supabase."""
         if df.empty:
@@ -302,6 +305,9 @@ class SupabaseHandler:
             return
 
         try:
+            # DEBUG: Afficher les colonnes envoyées
+            logging.info(f"Colonnes envoyées à {table_name}: {list(df.columns)}")
+
             # Conversion des dates pour éviter les erreurs JSON
             df = df.copy()
             for col in df.columns:
@@ -311,7 +317,6 @@ class SupabaseHandler:
                     col in ["date", "time", "date_obs_elab", "date_prod"]
                     and df[col].dtype == "object"
                 ):
-                    # Essayer de convertir les colonnes de date string
                     try:
                         df[col] = pd.to_datetime(df[col]).dt.strftime("%Y-%m-%d")
                     except:
@@ -319,6 +324,7 @@ class SupabaseHandler:
 
             data = df.to_dict(orient="records")
 
+<<<<<<< HEAD
 <<<<<<< HEAD
             # Utiliser insert au lieu de upsert pour la première création
 >>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
@@ -339,25 +345,32 @@ class SupabaseHandler:
                     logging.error(
                         f"Erreur lors de l'insertion dans {table_name} : {e2}"
                     )
+=======
+            # Utilisation de upsert directement
+            result = self.supabase.table(table_name).upsert(data).execute()
+            logging.info(f"{len(df)} lignes upsertées dans {table_name}.")
+>>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
 
         except Exception as e:
-            logging.error(
-                f"Erreur lors du traitement des données pour {table_name} : {e}"
-            )
+            logging.error(f"Erreur lors de l'insertion dans {table_name} : {e}")
 
 
-# HANDLER POUR LES CSV LOCAUX
-class CSVDataHandler:
-    """Gère le chargement, le nettoyage et l'envoi vers Supabase des CSV."""
+class DataUploader:
+    """Classe dédiée uniquement à l'upload des données vers Supabase."""
 
     def __init__(self, supabase_handler: SupabaseHandler):
         self.supabase_handler = supabase_handler
-        self.raw_path = Path(settings.data_raw_path)
-        self.raw_path.mkdir(parents=True, exist_ok=True)
 
-    def load_csv(self, file_path: str) -> pd.DataFrame:
-        """Charge un CSV et renvoie un DataFrame."""
+    def upload_raw_dataset(self, df: pd.DataFrame, dataset_name: str):
+        """
+        Upload UNIQUEMENT les données brutes vers les tables raw_*
+        """
+        if df.empty:
+            logging.warning(f"Dataset {dataset_name} vide, rien à uploader.")
+            return
+
         try:
+<<<<<<< HEAD
             df = pd.read_csv(file_path)
             logging.info(f"{len(df)} enregistrements chargés depuis {file_path}")
             return df
@@ -403,3 +416,31 @@ class CSVDataHandler:
         except Exception as e:
             logging.error(f"Erreur lors de l'upload Supabase {table_prefix}: {e}")
 >>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
+=======
+            raw_table = f"raw_{dataset_name}"
+            self.supabase_handler.upsert_dataframe(df, raw_table)
+            logging.info(f"Données brutes uploadées: {raw_table}")
+
+        except Exception as e:
+            logging.error(
+                f"Erreur lors de l'upload des données brutes {dataset_name}: {e}"
+            )
+
+    def upload_clean_dataset(self, df: pd.DataFrame, dataset_name: str):
+        """
+        Upload UNIQUEMENT les données nettoyées vers les tables clean_*
+        """
+        if df.empty:
+            logging.warning(f"Dataset {dataset_name} vide, rien à uploader.")
+            return
+
+        try:
+            clean_table = f"clean_{dataset_name}"
+            self.supabase_handler.upsert_dataframe(df, clean_table)
+            logging.info(f"Données nettoyées uploadées: {clean_table}")
+
+        except Exception as e:
+            logging.error(
+                f"Erreur lors de l'upload des données nettoyées {dataset_name}: {e}"
+            )
+>>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)

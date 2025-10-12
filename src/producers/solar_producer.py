@@ -3,10 +3,13 @@ import pandas as pd
 from .base_producer import BaseProducer
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 from src.data_ingestion.utils.data_cleaner import DataCleaner
 =======
 =======
 >>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
+=======
+>>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
 from data_ingestion.handlers.etl_supabase import CSVDataHandler
 from data_ingestion.utils.data_cleaner import DataCleaner
 <<<<<<< HEAD
@@ -46,6 +49,8 @@ from data_ingestion.data_cleaner import DataCleaner
 =======
 =======
 from src.data_ingestion.handlers.etl_supabase import SupabaseHandler
+=======
+>>>>>>> a01c904 (correction problème de double import dans supabase + correction dans la séparation raw / clean)
 from src.data_ingestion.utils.data_cleaner import DataCleaner
 >>>>>>> bf6ca9a (refacto code + ajout du main.py fonctionnel)
 >>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
@@ -81,9 +86,12 @@ class SolarProducer(BaseProducer):
         super().__init__(name, location, nominal_power)
         self.data_file = data_file
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         self.data_handler = SupabaseHandler(data_file)
 >>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
+=======
+>>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
 
     def load_production_data(self, start_date: date, end_date: date) -> pd.DataFrame:
         """

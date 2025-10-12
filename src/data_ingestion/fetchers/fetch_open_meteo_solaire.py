@@ -28,6 +28,9 @@ def get_solar_forecast(
         "longitude": longitude,
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
         "daily": "temperature_2m_max,temperature_2m_min,temperature_2m_mean,shortwave_radiation_sum,sunshine_duration,daylight_duration,cloud_cover_mean,relative_humidity_2m_mean,precipitation_sum,wind_speed_10m_mean",
         "timezone": "Europe/Paris",
         "forecast_days": 16,
@@ -112,6 +115,9 @@ def get_solar_history(
         "end_date": end_date,
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
         "daily": "temperature_2m_max,temperature_2m_min,temperature_2m_mean,shortwave_radiation_sum,sunshine_duration,daylight_duration,cloud_cover_mean,relative_humidity_2m_mean,precipitation_sum,wind_speed_10m_mean",
         "timezone": "Europe/Paris",
     }
