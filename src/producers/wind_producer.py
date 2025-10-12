@@ -6,6 +6,7 @@ from .base_producer import BaseProducer
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 from data_ingestion.handlers.etl_supabase import CSVDataHandler
 from data_ingestion.utils.data_cleaner import DataCleaner
 =======
@@ -22,6 +23,8 @@ from data_ingestion.utils.data_cleaner import DataCleaner
 >>>>>>> b95c547 (restructuration des fichiers + tests fonctionnels)
 =======
 from src.data_ingestion.handlers.etl_supabase import SupabaseHandler
+=======
+>>>>>>> a01c904 (correction problème de double import dans supabase + correction dans la séparation raw / clean)
 from src.data_ingestion.utils.data_cleaner import DataCleaner
 >>>>>>> bf6ca9a (refacto code + ajout du main.py fonctionnel)
 
@@ -37,14 +40,14 @@ class WindProducer(BaseProducer):
         """
         super().__init__(name, location, nominal_power)
         self.data_file = data_file
-        self.data_handler = SupabaseHandler(data_file)
 
     def load_production_data(self, start_date: date, end_date: date) -> pd.DataFrame:
         """
         Charge les données de production éolienne entre deux dates.
         """
         try:
-            df = self.data_handler.load()
+            # Charger directement avec pandas
+            df = pd.read_csv(self.data_file)
 
             # Nettoyage spécifique aux données de production éolienne
             df = DataCleaner.clean_production_data(df, "wind")

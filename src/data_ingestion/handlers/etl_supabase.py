@@ -2,7 +2,6 @@ import logging
 import pandas as pd
 from supabase import create_client, Client
 from src.config.settings import settings
-from pathlib import Path
 
 # CONFIGURATION SUPABASE
 SUPABASE_URL = settings.supabase_url
@@ -19,13 +18,6 @@ class SupabaseHandler:
         self.supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
         logging.info("Connexion Supabase initialisée avec succès.")
 
-        # Créer les tables via l'API REST
-        self.create_tables_simple()
-
-    def create_tables_simple(self):
-        """Crée les tables via des insertions initiales."""
-        logging.info("Les tables seront créées automatiquement au premier insert")
-
     def upsert_dataframe(self, df: pd.DataFrame, table_name: str):
         """Insère ou met à jour les données dans une table Supabase."""
         if df.empty:
@@ -33,6 +25,9 @@ class SupabaseHandler:
             return
 
         try:
+            # DEBUG: Afficher les colonnes envoyées
+            logging.info(f"Colonnes envoyées à {table_name}: {list(df.columns)}")
+
             # Conversion des dates pour éviter les erreurs JSON
             df = df.copy()
             for col in df.columns:
@@ -42,7 +37,6 @@ class SupabaseHandler:
                     col in ["date", "time", "date_obs_elab", "date_prod"]
                     and df[col].dtype == "object"
                 ):
-                    # Essayer de convertir les colonnes de date string
                     try:
                         df[col] = pd.to_datetime(df[col]).dt.strftime("%Y-%m-%d")
                     except:
@@ -50,75 +44,52 @@ class SupabaseHandler:
 
             data = df.to_dict(orient="records")
 
-            # Utilisation de insert pour la première création
-            try:
-                result = self.supabase.table(table_name).insert(data).execute()
-                logging.info(
-                    f"{len(df)} lignes insérées dans {table_name} (première création)."
-                )
-            except Exception as e:
-                # Si l'insert échoue, on essaye upsert
-                try:
-                    result = self.supabase.table(table_name).upsert(data).execute()
-                    logging.info(f"{len(df)} lignes upsertées dans {table_name}.")
-                except Exception as e2:
-                    logging.error(
-                        f"Erreur lors de l'insertion dans {table_name} : {e2}"
-                    )
+            # Utilisation de upsert directement
+            result = self.supabase.table(table_name).upsert(data).execute()
+            logging.info(f"{len(df)} lignes upsertées dans {table_name}.")
 
         except Exception as e:
-            logging.error(
-                f"Erreur lors du traitement des données pour {table_name} : {e}"
-            )
+            logging.error(f"Erreur lors de l'insertion dans {table_name} : {e}")
 
 
-# HANDLER POUR LES CSV LOCAUX
-class CSVDataHandler:
-    """Gère le chargement, le nettoyage et l'envoi vers Supabase des CSV."""
+class DataUploader:
+    """Classe dédiée uniquement à l'upload des données vers Supabase."""
 
     def __init__(self, supabase_handler: SupabaseHandler):
         self.supabase_handler = supabase_handler
-        self.raw_path = Path(settings.data_raw_path)
-        self.raw_path.mkdir(parents=True, exist_ok=True)
 
-    def load_csv(self, file_path: str) -> pd.DataFrame:
-        """Charge un CSV et renvoie un DataFrame."""
+    def upload_raw_dataset(self, df: pd.DataFrame, dataset_name: str):
+        """
+        Upload UNIQUEMENT les données brutes vers les tables raw_*
+        """
+        if df.empty:
+            logging.warning(f"Dataset {dataset_name} vide, rien à uploader.")
+            return
+
         try:
-            df = pd.read_csv(file_path)
-            logging.info(f"{len(df)} enregistrements chargés depuis {file_path}")
-            return df
-        except Exception as e:
-            logging.error(f"Erreur lors du chargement du CSV {file_path}: {e}")
-            return pd.DataFrame()
-
-    def save_csv(self, df: pd.DataFrame, file_name: str):
-        """Sauvegarde un DataFrame dans le dossier local data/raw."""
-        try:
-            path = self.raw_path / file_name
-            df.to_csv(path, index=False)
-            logging.info(f"CSV sauvegardé : {path}")
-        except Exception as e:
-            logging.error(f"Erreur lors de la sauvegarde du CSV {file_name}: {e}")
-
-    def upload_to_supabase(self, df: pd.DataFrame, table_prefix: str):
-        """Insère les données dans Supabase (raw + clean)."""
-        try:
-            from src.data_ingestion.utils.data_cleaner import DataCleaner
-
-            # Upload des données brutes
-            self.supabase_handler.upsert_dataframe(df, f"raw_{table_prefix}")
-
-            # Nettoyage et upload des données nettoyées
-            if "solar" in table_prefix:
-                df_clean = DataCleaner.clean_solar_data(df)
-            elif "wind" in table_prefix:
-                df_clean = DataCleaner.clean_wind_data(df)
-            elif "hydro" in table_prefix or "hubeau" in table_prefix:
-                df_clean = DataCleaner.clean_hydro_data(df)
-            else:
-                df_clean = df.copy()
-
-            self.supabase_handler.upsert_dataframe(df_clean, f"clean_{table_prefix}")
+            raw_table = f"raw_{dataset_name}"
+            self.supabase_handler.upsert_dataframe(df, raw_table)
+            logging.info(f"Données brutes uploadées: {raw_table}")
 
         except Exception as e:
-            logging.error(f"Erreur lors de l'upload Supabase {table_prefix}: {e}")
+            logging.error(
+                f"Erreur lors de l'upload des données brutes {dataset_name}: {e}"
+            )
+
+    def upload_clean_dataset(self, df: pd.DataFrame, dataset_name: str):
+        """
+        Upload UNIQUEMENT les données nettoyées vers les tables clean_*
+        """
+        if df.empty:
+            logging.warning(f"Dataset {dataset_name} vide, rien à uploader.")
+            return
+
+        try:
+            clean_table = f"clean_{dataset_name}"
+            self.supabase_handler.upsert_dataframe(df, clean_table)
+            logging.info(f"Données nettoyées uploadées: {clean_table}")
+
+        except Exception as e:
+            logging.error(
+                f"Erreur lors de l'upload des données nettoyées {dataset_name}: {e}"
+            )

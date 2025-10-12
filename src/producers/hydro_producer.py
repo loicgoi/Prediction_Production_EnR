@@ -18,14 +18,14 @@ class HydroProducer(BaseProducer):
         """
         super().__init__(name, location, nominal_power)
         self.data_file = data_file
-        self.data_handler = SupabaseHandler(data_file)
 
     def load_production_data(self, start_date: date, end_date: date) -> pd.DataFrame:
         """
         Charge les données de production hydraulique entre deux dates.
         """
         try:
-            df = self.data_handler.load()
+            # Charger directement avec pandas
+            df = pd.read_csv(self.data_file)
 
             # Nettoyage spécifique aux données de production hydraulique
             df = DataCleaner.clean_production_data(df, "hydro")
