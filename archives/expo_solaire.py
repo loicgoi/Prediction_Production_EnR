@@ -419,7 +419,7 @@ def fill_missing_values(df: pd.DataFrame) -> pd.DataFrame:
     
     # Réinitialiser l'index
     df.reset_index(inplace=True)
-        print(f"Il reste {remaining_missing} valeurs manquantes après interpolation.")
+    print(f"Il reste {remaining_missing} valeurs manquantes après interpolation.")
     
     # Réinitialiser l'index
     df.reset_index(inplace=True)
@@ -469,8 +469,6 @@ def check_solar_data(df):
     # 2️ Cohérence entre colonnes
     if 'sunshine_duration' in df.columns and 'daylight_duration' in df.columns:
         invalid_sunshine = df[df['sunshine_duration'] > df['daylight_duration']]
-    if 'sunshine_duration' in df.columns and 'daylight_duration' in df.columns:
-        invalid_sunshine = df[df['sunshine_duration'] > df['daylight_duration']]
         if not invalid_sunshine.empty:
             print("Durée d'ensoleillement > durée du jour détectée :")
             print(invalid_sunshine[['sunshine_duration', 'daylight_duration']])
@@ -480,8 +478,7 @@ def check_solar_data(df):
 
     # 3️ Pourcentages
     for col in ['cloud_cover_mean', 'relative_humidity_2m_mean']:
-    for col in ['cloud_cover_mean', 'relative_humidity_2m_mean']:
-        if col in df.columns:
+            if col in df.columns:
             invalid = df[(df[col] < 0) | (df[col] > 100)]
             if not invalid.empty:
                 print(f"Valeurs aberrantes détectées dans {col} :")
@@ -490,7 +487,6 @@ def check_solar_data(df):
                 print(f"{col} OK.")
 
     # 4️ Précipitations et vent
-    for col in ['precipitation_sum', 'wind_speed_10m_max']:
     for col in ['precipitation_sum', 'wind_speed_10m_max']:
         if col in df.columns:
             invalid = df[df[col] < 0]
