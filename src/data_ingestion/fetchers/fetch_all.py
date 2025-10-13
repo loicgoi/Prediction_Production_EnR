@@ -8,6 +8,38 @@ from src.data_ingestion.utils.data_cleaner import DataCleaner
 from src.config.settings import settings
 
 
+def manage_forecast_tables(supabase_handler):
+    """
+    Nettoie COMPLÈTEMENT les tables forecast pour ne garder que les 16 nouveaux jours.
+    Les tables history restent intactes pour l'accumulation historique.
+    """
+    forecast_tables = [
+        "raw_solar_forecast",
+        "clean_solar_forecast",
+        "raw_wind_forecast",
+        "clean_wind_forecast",
+    ]
+
+    for table in forecast_tables:
+        try:
+            # Compter le nombre de lignes avant suppression
+            count_before = (
+                supabase_handler.supabase.table(table)
+                .select("date", count="exact")
+                .execute()
+            )
+
+            # Supprimer TOUTES les données
+            supabase_handler.supabase.table(table).delete().neq("date", "").execute()
+
+            logging.info(
+                f"Table {table} vidée ({count_before.count} lignes supprimées.)"
+            )
+
+        except Exception as e:
+            logging.error(f"Erreur lors du vidage de {table}: {e}.")
+
+
 def fetch_all(
     latitude: float = None, longitude: float = None, hubeau_station: str = None
 ):
@@ -22,6 +54,10 @@ def fetch_all(
     # Initialiser SupabaseHandler et DataUploader
     supabase_handler = SupabaseHandler()
     data_uploader = DataUploader(supabase_handler)
+
+    # Nettoyage des tables forecast
+    logging.info("Nettoyage des tables forecast...")
+    manage_forecast_tables(supabase_handler)
 
     # Données API météo
     solar_handler = WeatherDataHandler(
