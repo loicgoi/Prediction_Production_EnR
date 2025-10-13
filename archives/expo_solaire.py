@@ -275,9 +275,6 @@ def select_relevant_columns(df: pd.DataFrame) -> pd.DataFrame:
 df_historical_solaire = select_relevant_columns(df_historical_solaire)
 print(df_historical_solaire.head())
 ############_____________________________________###################
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 from logging import info
 import os
 import pandas as pd
@@ -595,6 +592,3 @@ def select_relevant_columns(df: pd.DataFrame) -> pd.DataFrame:
 df_historical_solaire = select_relevant_columns(df_historical_solaire)
 print(df_historical_solaire.head())
 ############_____________________________________###################
-=======
->>>>>>> 9d0d371 (feat: ajout nettoyage et prétraitement données solaires)
->>>>>>> ab05c2a (création dossier archives/ pour conservation de fichiers de dev)

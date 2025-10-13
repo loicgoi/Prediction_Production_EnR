@@ -4,9 +4,14 @@ __pycache__/
 *$py.class
 data/
 <<<<<<< HEAD
+<<<<<<< HEAD
 clean_data_eolien/
 =======
 notebooks/
+=======
+
+
+>>>>>>> 6365a90 (feat(models): entraînement, interprétation et sauvegarde des modèles solaires)
 
 >>>>>>> cb3b209 (exploration_solaire)
 # C extensions
