@@ -7,7 +7,7 @@ from src.data_ingestion.fetchers.fetch_open_meteo_eolien import (
 )
 
 
-@patch("data_ingestion.fetchers.fetch_open_meteo_eolien.requests.get")
+@patch("src.data_ingestion.fetchers.fetch_open_meteo_eolien.requests.get")
 def test_get_wind_forecast_success(mock_get):
     """Test la récupération des prévisions éoliennes."""
     mock_response = Mock()
@@ -21,13 +21,13 @@ def test_get_wind_forecast_success(mock_get):
     mock_response.raise_for_status = Mock()
     mock_get.return_value = mock_response
 
-    df = get_wind_forecast(43.6109, 3.8763, "2024-01-01", "2024-01-02")
+    df = get_wind_forecast(43.6109, 3.8763)
 
     assert isinstance(df, pd.DataFrame)
     assert not df.empty
 
 
-@patch("data_ingestion.fetchers.fetch_open_meteo_eolien.requests.get")
+@patch("src.data_ingestion.fetchers.fetch_open_meteo_eolien.requests.get")
 def test_get_wind_history_success(mock_get):
     """Test la récupération de l'historique éolien."""
     mock_response = Mock()
