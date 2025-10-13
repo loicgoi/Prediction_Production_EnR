@@ -12,7 +12,7 @@ def get_wind_forecast(
     params = {
         "latitude": latitude,
         "longitude": longitude,
-        "daily": "wind_speed_10m_max,wind_speed_10m_mean,wind_gusts_10m_max,wind_direction_10m_dominant,wind_gusts_10m_mean,temperature_2m_mean,surface_pressure_mean,cloud_cover_mean",
+        "daily": "wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,wind_gusts_10m_mean,temperature_2m_mean,surface_pressure_mean,cloud_cover_mean",
         "timezone": "Europe/Paris",
         "forecast_days": 16,
     }
@@ -40,7 +40,7 @@ def get_wind_history(
         "longitude": longitude,
         "start_date": start_date,
         "end_date": end_date,
-        "daily": "wind_speed_10m_max,wind_speed_10m_mean,wind_gusts_10m_max,wind_direction_10m_dominant,wind_gusts_10m_mean,temperature_2m_mean,surface_pressure_mean,cloud_cover_mean",
+        "daily": "wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,wind_gusts_10m_mean,temperature_2m_mean,surface_pressure_mean,cloud_cover_mean",
         "timezone": "Europe/Paris",
     }
 
