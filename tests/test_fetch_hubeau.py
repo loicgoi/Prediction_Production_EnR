@@ -7,6 +7,7 @@ from src.data_ingestion.fetchers.fetch_hubeau import get_hubeau_data
 
 
 @patch("src.data_ingestion.fetchers.fetch_hubeau.requests.get")
+<<<<<<< HEAD
 =======
 from data_ingestion.fetchers.fetch_hubeau import get_hubeau_data
 =======
@@ -16,6 +17,8 @@ from src.data_ingestion.fetchers.fetch_hubeau import get_hubeau_data
 
 @patch("data_ingestion.fetchers.fetch_hubeau.requests.get")
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+>>>>>>> b6ddba9 (update tests)
 def test_get_hubeau_data_success(mock_get):
     """Test la récupération réussie des données Hub'Eau."""
     # Mock de la réponse
@@ -26,10 +29,14 @@ def test_get_hubeau_data_success(mock_get):
                 "code_station": "Y321002101",
                 "date_obs_elab": "2024-01-01",
 <<<<<<< HEAD
+<<<<<<< HEAD
                 "resultat_obs_elab": 10.5,
 =======
                 "result_obs_elab": 10.5,
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+                "resultat_obs_elab": 10.5,
+>>>>>>> b6ddba9 (update tests)
             }
         ]
     }
@@ -45,6 +52,7 @@ def test_get_hubeau_data_success(mock_get):
     assert "code_station" in df.columns
     assert "date_obs_elab" in df.columns
 <<<<<<< HEAD
+<<<<<<< HEAD
     assert "resultat_obs_elab" in df.columns
 
 
@@ -55,6 +63,12 @@ def test_get_hubeau_data_success(mock_get):
 
 @patch("data_ingestion.fetchers.fetch_hubeau.requests.get")
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+    assert "resultat_obs_elab" in df.columns
+
+
+@patch("src.data_ingestion.fetchers.fetch_hubeau.requests.get")
+>>>>>>> b6ddba9 (update tests)
 def test_get_hubeau_data_empty(mock_get):
     """Test la récupération avec données vides."""
     mock_response = Mock()
@@ -69,10 +83,14 @@ def test_get_hubeau_data_empty(mock_get):
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 @patch("src.data_ingestion.fetchers.fetch_hubeau.requests.get")
 =======
 @patch("data_ingestion.fetchers.fetch_hubeau.requests.get")
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+@patch("src.data_ingestion.fetchers.fetch_hubeau.requests.get")
+>>>>>>> b6ddba9 (update tests)
 def test_get_hubeau_data_http_error(mock_get):
     """Test la gestion des erreurs HTTP."""
     mock_get.side_effect = Exception("HTTP Error")

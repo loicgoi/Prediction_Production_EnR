@@ -16,10 +16,14 @@ from src.data_ingestion.fetchers.fetch_open_meteo_eolien import (
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 @patch("src.data_ingestion.fetchers.fetch_open_meteo_eolien.requests.get")
 =======
 @patch("data_ingestion.fetchers.fetch_open_meteo_eolien.requests.get")
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+@patch("src.data_ingestion.fetchers.fetch_open_meteo_eolien.requests.get")
+>>>>>>> b6ddba9 (update tests)
 def test_get_wind_forecast_success(mock_get):
     """Test la récupération des prévisions éoliennes."""
     mock_response = Mock()
@@ -34,20 +38,28 @@ def test_get_wind_forecast_success(mock_get):
     mock_get.return_value = mock_response
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     df = get_wind_forecast(43.6109, 3.8763)
 =======
     df = get_wind_forecast(43.6109, 3.8763, "2024-01-01", "2024-01-02")
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+    df = get_wind_forecast(43.6109, 3.8763)
+>>>>>>> b6ddba9 (update tests)
 
     assert isinstance(df, pd.DataFrame)
     assert not df.empty
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 @patch("src.data_ingestion.fetchers.fetch_open_meteo_eolien.requests.get")
 =======
 @patch("data_ingestion.fetchers.fetch_open_meteo_eolien.requests.get")
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+@patch("src.data_ingestion.fetchers.fetch_open_meteo_eolien.requests.get")
+>>>>>>> b6ddba9 (update tests)
 def test_get_wind_history_success(mock_get):
     """Test la récupération de l'historique éolien."""
     mock_response = Mock()

@@ -15,6 +15,7 @@ from src.producers.hydro_producer import HydroProducer
 
 def test_hydro_producer_initialization():
     """Test l'initialisation du producteur hydraulique."""
+<<<<<<< HEAD
     with patch("src.producers.hydro_producer.SupabaseHandler") as mock_handler:
         mock_instance = Mock()
         mock_handler.return_value = mock_instance
@@ -61,12 +62,41 @@ def test_hydro_producer_load_data(mock_cleaner, mock_handler):
     mock_instance = Mock()
     mock_instance.load.return_value = pd.DataFrame(
         {"date": ["2024-01-01", "2024-01-02"], "prod_hydro": [180.5, 195.2]}
+=======
+    producer = HydroProducer(
+        "Centrale hydro", "Montpellier", 200.0, "data/raw/prod_hydro.csv"
+>>>>>>> b6ddba9 (update tests)
     )
-    mock_handler.return_value = mock_instance
 
+    assert producer.name == "Centrale hydro"
+    assert producer.location == "Montpellier"
+    assert producer.nominal_power == 200.0
+    assert producer.data_file == "data/raw/prod_hydro.csv"
+
+
+@patch("pandas.read_csv")
+@patch("src.producers.hydro_producer.DataCleaner")
+def test_hydro_producer_load_data_success(mock_cleaner, mock_read_csv):
+    """Test le chargement réussi des données hydrauliques."""
+    # Mock de read_csv
+    mock_read_csv.return_value = pd.DataFrame(
+        {
+            "date": ["2024-01-01", "2024-01-02", "2024-01-03"],
+            "prod_hydro": [180.5, 195.2, 170.8],
+        }
+    )
+
+    # Mock du cleaner
     mock_cleaner.clean_production_data.return_value = pd.DataFrame(
+<<<<<<< HEAD
         {"date": ["2024-01-01", "2024-01-02"], "production_kwh": [180.5, 195.2]}
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+        {
+            "date": [date(2024, 1, 1), date(2024, 1, 2), date(2024, 1, 3)],
+            "production_kwh": [180.5, 195.2, 170.8],
+        }
+>>>>>>> b6ddba9 (update tests)
     )
 
     producer = HydroProducer("Test", "Montpellier", 200.0, "test.csv")
@@ -74,6 +104,9 @@ def test_hydro_producer_load_data(mock_cleaner, mock_handler):
 
     assert not df.empty
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b6ddba9 (update tests)
     assert len(df) == 2  # Doit être filtré par dates
     assert "production_kwh" in df.columns
     mock_read_csv.assert_called_once_with("test.csv")
@@ -134,31 +167,37 @@ def test_hydro_producer_load_data_empty_file(mock_cleaner, mock_read_csv):
     mock_read_csv.assert_called_once_with("test.csv")
 
 
+<<<<<<< HEAD
 =======
     mock_cleaner.clean_production_data.assert_called_once()
 
 
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+>>>>>>> b6ddba9 (update tests)
 def test_hydro_producer_calculate_statistics():
     """Test le calcul des statistiques hydrauliques."""
-    with patch("src.producers.hydro_producer.SupabaseHandler") as mock_handler:
-        mock_instance = Mock()
-        mock_handler.return_value = mock_instance
+    producer = HydroProducer("Test", "Montpellier", 200.0, "test.csv")
 
-        producer = HydroProducer("Test", "Montpellier", 200.0, "test.csv")
+    with patch.object(producer, "load_production_data") as mock_load:
+        mock_load.return_value = pd.DataFrame(
+            {
+                "date": [date(2024, 1, 1), date(2024, 1, 2)],
+                "production_kwh": [180.5, 195.2],
+            }
+        )
 
-        with patch.object(producer, "load_production_data") as mock_load:
-            mock_load.return_value = pd.DataFrame(
-                {
-                    "date": [date(2024, 1, 1), date(2024, 1, 2)],
-                    "production_kwh": [180.5, 195.2],
-                }
-            )
+        stats = producer.calculate_statistics(date(2024, 1, 1), date(2024, 1, 2))
 
+<<<<<<< HEAD
 <<<<<<< HEAD
         assert "total_production" in stats
         assert "average_daily_production" in stats
 <<<<<<< HEAD
+=======
+        assert "total_production" in stats
+        assert "average_daily_production" in stats
+>>>>>>> b6ddba9 (update tests)
         assert "max_daily_production" in stats
         assert "min_daily_production" in stats
         assert "capacity_factor" in stats
@@ -167,6 +206,7 @@ def test_hydro_producer_calculate_statistics():
         assert stats["max_daily_production"] == 195.2
         assert stats["min_daily_production"] == 180.5
         assert 0 <= stats["capacity_factor"] <= 1
+<<<<<<< HEAD
 
 
 def test_hydro_producer_calculate_statistics_empty_data():
@@ -238,3 +278,66 @@ def test_hydro_producer_logger():
             assert "average_daily_production" in stats
             assert stats["total_production"] == 375.7
 >>>>>>> 5594093 (màj des test + commentires code + README.md)
+=======
+
+
+def test_hydro_producer_calculate_statistics_empty_data():
+    """Test les statistiques avec données vides."""
+    producer = HydroProducer("Test", "Montpellier", 200.0, "test.csv")
+
+    with patch.object(producer, "load_production_data") as mock_load:
+        mock_load.return_value = pd.DataFrame()
+
+        stats = producer.calculate_statistics(date(2024, 1, 1), date(2024, 1, 2))
+
+        assert stats["total_production"] == 0
+        assert stats["average_daily_production"] == 0
+        assert stats["max_daily_production"] == 0
+        assert stats["min_daily_production"] == 0
+        assert stats["capacity_factor"] == 0.0
+
+
+def test_hydro_producer_capacity_factor():
+    """Test le calcul du facteur de capacité."""
+    producer = HydroProducer("Test", "Montpellier", 200.0, "test.csv")
+
+    with patch.object(producer, "load_production_data") as mock_load:
+        # Production sur 2 jours : 375.7 kWh
+        # Production max possible : 200 kW * 24h * 2 jours = 9600 kWh
+        # Facteur de capacité : 375.7 / 9600 ≈ 0.0391
+        mock_load.return_value = pd.DataFrame(
+            {
+                "date": [date(2024, 1, 1), date(2024, 1, 2)],
+                "production_kwh": [180.5, 195.2],
+            }
+        )
+
+        capacity_factor = producer.get_production_capacity_factor(
+            date(2024, 1, 1), date(2024, 1, 2)
+        )
+
+        assert isinstance(capacity_factor, float)
+        assert 0 <= capacity_factor <= 1
+        assert abs(capacity_factor - 0.0391) < 0.001
+
+
+def test_hydro_producer_capacity_factor_empty_data():
+    """Test le facteur de capacité avec données vides."""
+    producer = HydroProducer("Test", "Montpellier", 200.0, "test.csv")
+
+    with patch.object(producer, "load_production_data") as mock_load:
+        mock_load.return_value = pd.DataFrame()
+
+        capacity_factor = producer.get_production_capacity_factor(
+            date(2024, 1, 1), date(2024, 1, 2)
+        )
+
+        assert capacity_factor == 0.0
+
+
+def test_hydro_producer_logger():
+    """Test que le logger est correctement initialisé."""
+    producer = HydroProducer("Test", "Montpellier", 200.0, "test.csv")
+    assert producer.logger is not None
+    assert producer.logger.name == "HydroProducer"
+>>>>>>> b6ddba9 (update tests)

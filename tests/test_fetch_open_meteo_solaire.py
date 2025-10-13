@@ -16,10 +16,14 @@ from src.data_ingestion.fetchers.fetch_open_meteo_solaire import (
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 @patch("src.data_ingestion.fetchers.fetch_open_meteo_solaire.requests.get")
 =======
 @patch("data_ingestion.fetchers.fetch_open_meteo_solaire.requests.get")
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+@patch("src.data_ingestion.fetchers.fetch_open_meteo_solaire.requests.get")
+>>>>>>> b6ddba9 (update tests)
 def test_get_solar_forecast_success(mock_get):
     """Test la récupération des prévisions solaires."""
     mock_response = Mock()
@@ -27,10 +31,14 @@ def test_get_solar_forecast_success(mock_get):
         "daily": {
             "time": ["2024-01-01", "2024-01-02"],
 <<<<<<< HEAD
+<<<<<<< HEAD
             "temperature_2m_max": [15, 16],
 =======
             "cloud_cover_max": [50, 60],
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+            "temperature_2m_max": [15, 16],
+>>>>>>> b6ddba9 (update tests)
             "shortwave_radiation_sum": [15.5, 16.2],
         }
     }
@@ -38,10 +46,14 @@ def test_get_solar_forecast_success(mock_get):
     mock_get.return_value = mock_response
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     df = get_solar_forecast(43.6109, 3.8763)
 =======
     df = get_solar_forecast(43.6109, 3.8763, "2024-01-01", "2024-01-02")
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+    df = get_solar_forecast(43.6109, 3.8763)
+>>>>>>> b6ddba9 (update tests)
 
     assert isinstance(df, pd.DataFrame)
     assert not df.empty
@@ -49,10 +61,14 @@ def test_get_solar_forecast_success(mock_get):
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 @patch("src.data_ingestion.fetchers.fetch_open_meteo_solaire.requests.get")
 =======
 @patch("data_ingestion.fetchers.fetch_open_meteo_solaire.requests.get")
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
+=======
+@patch("src.data_ingestion.fetchers.fetch_open_meteo_solaire.requests.get")
+>>>>>>> b6ddba9 (update tests)
 def test_get_solar_history_success(mock_get):
     """Test la récupération de l'historique solaire."""
     mock_response = Mock()

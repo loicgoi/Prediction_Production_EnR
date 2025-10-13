@@ -347,4 +347,3 @@ def fetch_all(
 logging.error(f"Erreur lors de l'upload Supabase: {e}")
 
 logging.info("Récupération et insertion terminées")
-    return results

@@ -106,7 +106,8 @@ def test_supabase_handler_upsert_dataframe(mock_client):
     """Test l'upsert d'un DataFrame."""
     mock_supabase = Mock()
     mock_client.return_value = mock_supabase
-    mock_supabase.table.return_value.insert.return_value.execute.return_value = None
+    # CHANGEMENT : utiliser upsert() au lieu de insert()
+    mock_supabase.table.return_value.upsert.return_value.execute.return_value = None
 
     handler = SupabaseHandler()
     df = pd.DataFrame({"col1": [1, 2], "col2": [3, 4]})
@@ -116,10 +117,10 @@ def test_supabase_handler_upsert_dataframe(mock_client):
     mock_supabase.table.assert_called_with("test_table")
 
 
-def test_csv_data_handler_initialization():
-    """Test l'initialisation du CSVDataHandler."""
+def test_data_uploader_initialization():
+    """Test l'initialisation du DataUploader."""
     mock_supabase = Mock()
-    handler = CSVDataHandler(mock_supabase)
+    handler = DataUploader(mock_supabase)
 
     assert handler.supabase_handler == mock_supabase
     assert handler.raw_path is not None
@@ -251,22 +252,21 @@ def test_csv_data_handler_save_csv(mock_to_csv):
     handler = CSVDataHandler(mock_supabase)
     df = pd.DataFrame({"test": [1, 2, 3]})
 
-    handler.save_csv(df, "test.csv")
+    uploader.upload_raw_dataset(df, "test_dataset")
 
-    mock_to_csv.assert_called_once()
+    mock_instance.upsert_dataframe.assert_called_once()
 
 
-@patch("src.data_ingestion.utils.data_cleaner.DataCleaner")
-def test_csv_data_handler_upload_to_supabase_solar(mock_cleaner):
-    """Test l'upload des données solaires vers Supabase."""
-    mock_supabase_handler = Mock()
+@patch("src.data_ingestion.handlers.etl_supabase.SupabaseHandler")
+def test_data_uploader_upload_clean_dataset(mock_supabase_handler):
+    """Test l'upload des données nettoyées."""
+    mock_instance = Mock()
+    mock_supabase_handler.return_value = mock_instance
 
-    handler = CSVDataHandler(mock_supabase_handler)
-    df = pd.DataFrame({"time": ["2024-01-01", "2024-01-02"]})
+    uploader = DataUploader(mock_instance)
+    df = pd.DataFrame({"date": ["2024-01-01"], "value": [100]})
 
-    mock_cleaner.clean_solar_data.return_value = df
-
-    handler.upload_to_supabase(df, "solar_data")
+    uploader.upload_clean_dataset(df, "test_dataset")
 
     mock_supabase_handler.upsert_dataframe.assert_called()
     mock_cleaner.clean_solar_data.assert_called_once()

@@ -10,6 +10,7 @@ from src.data_ingestion.fetchers.fetch_all import fetch_all
 @patch("src.data_ingestion.fetchers.fetch_all.WeatherDataHandler")
 @patch("src.data_ingestion.fetchers.fetch_all.HubeauDataHandler")
 @patch("src.data_ingestion.fetchers.fetch_all.DataUploader")
+<<<<<<< HEAD
 @patch("pandas.read_csv")
 @patch("os.path.exists")
 def test_fetch_all_success(
@@ -132,12 +133,14 @@ from src.data_ingestion.fetchers.fetch_all import fetch_all
 @patch("src.data_ingestion.fetchers.fetch_all.WeatherDataHandler")
 @patch("src.data_ingestion.fetchers.fetch_all.HubeauDataHandler")
 @patch("src.data_ingestion.fetchers.fetch_all.CSVDataHandler")
+=======
+>>>>>>> b6ddba9 (update tests)
 @patch("pandas.read_csv")
 @patch("os.path.exists")
 def test_fetch_all_success(
     mock_exists,
     mock_read_csv,
-    mock_csv_handler,
+    mock_data_uploader,
     mock_hubeau_handler,
     mock_weather_handler,
     mock_supabase_handler,
@@ -146,13 +149,12 @@ def test_fetch_all_success(
     # Mock des chemins existants
     mock_exists.return_value = True
 
-    # Mock SupabaseHandler
+    # Mock SupabaseHandler et DataUploader
     mock_supabase_instance = Mock()
     mock_supabase_handler.return_value = mock_supabase_instance
 
-    # Mock CSVDataHandler
-    mock_csv_instance = Mock()
-    mock_csv_handler.return_value = mock_csv_instance
+    mock_uploader_instance = Mock()
+    mock_data_uploader.return_value = mock_uploader_instance
 
     # Mock WeatherDataHandler pour solaire et éolien
     mock_solar_instance = Mock()
@@ -160,29 +162,33 @@ def test_fetch_all_success(
 
     # Configurer les retours pour load()
     mock_solar_instance.load.side_effect = [
-        pd.DataFrame({"solar_forecast": [1, 2]}),  # Premier appel: forecast=True
-        pd.DataFrame({"solar_history": [3, 4]}),  # Deuxième appel: forecast=False
+        pd.DataFrame({"date": ["2024-01-01"], "solar_forecast": [1]}),
+        pd.DataFrame({"date": ["2024-01-01"], "solar_history": [3]}),
     ]
     mock_wind_instance.load.side_effect = [
-        pd.DataFrame({"wind_forecast": [5, 6]}),  # Premier appel: forecast=True
-        pd.DataFrame({"wind_history": [7, 8]}),  # Deuxième appel: forecast=False
+        pd.DataFrame({"date": ["2024-01-01"], "wind_forecast": [5]}),
+        pd.DataFrame({"date": ["2024-01-01"], "wind_history": [7]}),
     ]
 
-    # Alterner entre les instances
     mock_weather_handler.side_effect = [mock_solar_instance, mock_wind_instance]
 
     # Mock HubeauDataHandler
     mock_hubeau_instance = Mock()
-    mock_hubeau_instance.load.return_value = pd.DataFrame({"hubeau_data": [9, 10]})
+    mock_hubeau_instance.load.return_value = pd.DataFrame(
+        {"date": ["2024-01-01"], "hubeau_data": [9]}
+    )
     mock_hubeau_instance.clean.return_value = None
     mock_hubeau_handler.return_value = mock_hubeau_instance
 
     # Mock pandas.read_csv
-    mock_read_csv.return_value = pd.DataFrame({"production": [11, 12]})
+    mock_read_csv.return_value = pd.DataFrame(
+        {"date": ["2024-01-01", "2024-01-02"], "production": [11, 12]}
+    )
 
     # Appel de la fonction
     result = fetch_all()
 
+<<<<<<< HEAD
     # Vérifications
 <<<<<<< HEAD
     assert isinstance(result, pd.DataFrame)
@@ -190,28 +196,32 @@ def test_fetch_all_success(
     assert "wind_speed" in result.columns
 >>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
 =======
+=======
+    # VÉRIFICATIONS CORRIGÉES
+>>>>>>> b6ddba9 (update tests)
     assert isinstance(result, dict)
     assert "hubeau" in result
     assert "solar_forecast" in result
     assert "solar_history" in result
     assert "wind_forecast" in result
     assert "wind_history" in result
-    assert "solar_production" in result
-    assert "wind_production" in result
-    assert "hydro_production" in result
+    assert "prod_solaire" in result
+    assert "prod_eolienne" in result
+    assert "prod_hydro" in result
 
-    # Vérifier que upload_to_supabase a été appelé
-    assert mock_csv_instance.upload_to_supabase.call_count >= 1
+    # Vérifier que les méthodes d'upload ont été appelées
+    assert mock_uploader_instance.upload_raw_dataset.call_count >= 1
+    assert mock_uploader_instance.upload_clean_dataset.call_count >= 1
 
 
 @patch("src.data_ingestion.fetchers.fetch_all.SupabaseHandler")
 @patch("src.data_ingestion.fetchers.fetch_all.WeatherDataHandler")
 @patch("src.data_ingestion.fetchers.fetch_all.HubeauDataHandler")
-@patch("src.data_ingestion.fetchers.fetch_all.CSVDataHandler")
+@patch("src.data_ingestion.fetchers.fetch_all.DataUploader")
 @patch("os.path.exists")
 def test_fetch_all_with_empty_data(
     mock_exists,
-    mock_csv_handler,
+    mock_data_uploader,
     mock_hubeau_handler,
     mock_weather_handler,
     mock_supabase_handler,
@@ -224,8 +234,8 @@ def test_fetch_all_with_empty_data(
     mock_supabase_instance = Mock()
     mock_supabase_handler.return_value = mock_supabase_instance
 
-    mock_csv_instance = Mock()
-    mock_csv_handler.return_value = mock_csv_instance
+    mock_uploader_instance = Mock()
+    mock_data_uploader.return_value = mock_uploader_instance
 
     # Mock handlers avec données vides
     mock_solar_instance = Mock()
