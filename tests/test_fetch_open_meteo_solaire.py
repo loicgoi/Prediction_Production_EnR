@@ -7,28 +7,28 @@ from src.data_ingestion.fetchers.fetch_open_meteo_solaire import (
 )
 
 
-@patch("data_ingestion.fetchers.fetch_open_meteo_solaire.requests.get")
+@patch("src.data_ingestion.fetchers.fetch_open_meteo_solaire.requests.get")
 def test_get_solar_forecast_success(mock_get):
     """Test la récupération des prévisions solaires."""
     mock_response = Mock()
     mock_response.json.return_value = {
         "daily": {
             "time": ["2024-01-01", "2024-01-02"],
-            "cloud_cover_max": [50, 60],
+            "temperature_2m_max": [15, 16],
             "shortwave_radiation_sum": [15.5, 16.2],
         }
     }
     mock_response.raise_for_status = Mock()
     mock_get.return_value = mock_response
 
-    df = get_solar_forecast(43.6109, 3.8763, "2024-01-01", "2024-01-02")
+    df = get_solar_forecast(43.6109, 3.8763)
 
     assert isinstance(df, pd.DataFrame)
     assert not df.empty
     assert "time" in df.columns
 
 
-@patch("data_ingestion.fetchers.fetch_open_meteo_solaire.requests.get")
+@patch("src.data_ingestion.fetchers.fetch_open_meteo_solaire.requests.get")
 def test_get_solar_history_success(mock_get):
     """Test la récupération de l'historique solaire."""
     mock_response = Mock()
