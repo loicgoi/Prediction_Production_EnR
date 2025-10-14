@@ -10,16 +10,16 @@
 ---
 
 ## Table des matières
-- [Fonctionnalités](#-fonctionnalités)
-- [Architecture](#️-architecture)
-- [Installation](#-installation)
-- [Configuration](#️-configuration)
-- [Utilisation](#-utilisation)
-- [API](#-api)
-- [Interface web](#-interface)
-- [Tests](#-tests)
-- [Développement](#-développement)
-- [Licence](#-licence)
+- [Fonctionnalités](#fonctionnalités)
+- [Architecture](#architecture)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Utilisation](#utilisation)
+- [API](#api)
+- [Interface Web](#interface-web)
+- [Tests](#tests)
+- [Développement](#développement)
+- [Licence](#licence)
 
 ---
 
@@ -61,7 +61,7 @@
 - Graphiques avec Plotly
 - Prédictions en temps réel
 
-### Autmatisation
+### Automatisation
 - Script principal avec arguments
 - Lancement sélectif des composants
 - Pipeline complet données → entraînement → API → Interface
