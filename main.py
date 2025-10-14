@@ -27,6 +27,7 @@ def run_data_pipeline():
                 logging.info(f"{key}: Données récupérées")
 
         logging.info("Pipeline terminé avec succès !")
+        return True
 
     except Exception as e:
         logging.error(f"Erreur lors de l'exécution du pipeline: {e}")
@@ -57,7 +58,11 @@ def run_api():
         import uvicorn
 
         uvicorn.run(
-            "src.api.main:app", host="0.0.0.0", port=8000, reload=True, log_level="info"
+            "src.api.main:app",
+            host="0.0.0.0",
+            port=8000,
+            reload=False,
+            log_level="info",
         )
         return True
 
@@ -68,20 +73,20 @@ def run_api():
 
 def run_streamlit():
     """Lance l'application Streamlit"""
-    logging.info("Démarrage de l'application Streamlit")
+    logging.info("Application Streamlit lancée !")
 
     try:
         # Crée un dossier logs si nécessaire
         os.makedirs("logs", exist_ok=True)
 
         # Lance Streamlit
-        subprocess.run(
+        subprocess.Popen(
             [
                 "streamlit",
                 "run",
                 "src/frontend/app.py",
-                "--server.port=8501",
-                "server.address=0.0.0.0",
+                "--server.port=8500",
+                "--server.address=0.0.0.0",
                 "--logger.level=info",
             ]
         )
@@ -145,7 +150,7 @@ def check_services():
 
         # Vérifier Streamlit
         try:
-            response = requests.get("http://localhost:8501", timeout=5)
+            response = requests.get("http://localhost:8500", timeout=5)
             streamlit_status = (
                 "En ligne" if response.status_code == 200 else "Hors ligne"
             )
@@ -175,6 +180,29 @@ def check_services():
 
     except Exception as e:
         logging.error(f"Erreur lors de la vérification des services: {e}")
+
+
+def kill_existing_streamlit():
+    """Tuer les processus Streamlit existants"""
+    try:
+        import psutil
+
+        for proc in psutil.process_iter(["pid", "name", "cmdline"]):
+            try:
+                if proc.info["cmdline"] and any(
+                    "streamlit" in cmd for cmd in proc.info["cmdline"]
+                ):
+                    logging.info(
+                        f"Arrêt du processus Streamlit existant (PID: {proc.info['pid']})"
+                    )
+                    proc.terminate()
+                    proc.wait(timeout=5)
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.TimeoutExpired):
+                pass
+    except ImportError:
+        logging.warning(
+            "psutil non installé, impossible de vérifier les processus existants"
+        )
 
 
 def main():
@@ -216,8 +244,8 @@ Exemples d'utilisation:
     parser.add_argument(
         "--streamlit-port",
         type=int,
-        default=8501,
-        help="Port de Streamlit (défaut: 8501)",
+        default=8500,
+        help="Port de Streamlit (défaut: 8500)",
     )
 
     args = parser.parse_args()
