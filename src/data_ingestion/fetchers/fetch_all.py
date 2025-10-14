@@ -30,7 +30,9 @@ def manage_forecast_tables(supabase_handler):
             )
 
             # Supprimer TOUTES les données
-            supabase_handler.supabase.table(table).delete().neq("date", "").execute()
+            supabase_handler.supabase.table(table).delete().gte(
+                "date", "1900-01-01"
+            ).execute()
 
             logging.info(
                 f"Table {table} vidée ({count_before.count} lignes supprimées.)"
