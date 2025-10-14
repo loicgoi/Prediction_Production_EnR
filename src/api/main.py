@@ -1,246 +1,349 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import Optional
 import logging
-from src.prediction.model_predictor import ModelPredictor
-from src.prediction.forecast_predictor import ForecastPredictor
-import datetime
+import argparse
+import sys
+import os
+import subprocess
+from datetime import datetime
+import time
 
-# Configuration du logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from src.data_ingestion.fetchers.fetch_all import fetch_all
 
-app = FastAPI(
-    title="API de Prévision de Production d'Energie Renouvelable",
-    description="API pour prédire la production solaire, éolienne et hydraulique",
-    version="1.0.0",
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
 
-# modèles Pydantic pour les features d'entrée
-class SolarFeatures(BaseModel):
-    temperature_2m_mean: float
-    shortwave_radiation_sum_kwh_m2: float
-    sunshine_duration: float
-    cloud_cover_mean: float
-    relative_humidity_2m_mean: float
+def run_data_pipeline():
+    logging.info("Démarrage du pipeline de données")
 
-
-class WindFeatures(BaseModel):
-    wind_speed_10m_max: float
-    wind_gusts_10m_max: float
-    wind_direction_10m_dominant: float
-    temperature_2m_mean: float
-
-
-class HydroFeatures(BaseModel):
-    debit_l_s: float
-
-
-class PredictionResponse(BaseModel):
-    producer_type: str
-    prediction_kwh: float
-    status: str
-
-
-@app.get("/")
-async def root():
-    return {
-        "message": "API de prévision de production d'énergie renouvelable",
-        "endpoints": {
-            "solar": "/predict/solar",
-            "wind": "/predict/wind",
-            "hydro": "/predict/hydro",
-            "status": "/status",
-        },
-    }
-
-
-@app.get("/status")
-async def status_check():
-    """Endpoint sur l'état de l'API"""
-    return {"status": "Ok", "message": "API opérationnelle"}
-
-
-@app.post("/predict/solar", response_model=PredictionResponse)
-async def predict_solar(features: SolarFeatures):
-    """Prédit la production solaire de la journée en kWh"""
     try:
-        logger.info(f"Prédiction solaire avec features: {features.dict()}")
+        # Récupération de toutes les données
+        results = fetch_all()
 
-        predictor = ModelPredictor("solar")
-        prediction = predictor.predict(features.dict())
+        # Log des résultats
+        for key, df in results.items():
+            if hasattr(df, "shape"):  # C'est un DataFrame
+                logging.info(f"{key}: {len(df)} enregistrements récupérés")
+            else:
+                logging.info(f"{key}: Données récupérées")
 
-        return PredictionResponse(
-            producer_type="solar", prediction_kwh=round(prediction, 2), status="success"
-        )
+        logging.info("Pipeline terminé avec succès !")
+        return True
 
     except Exception as e:
-        logger.error(f"Erreur prédiction solaire: {e}")
-        raise HTTPException(status_code=500, detail=f"Erreur de prédiction: {str(e)}")
+        logging.error(f"Erreur lors de l'exécution du pipeline: {e}")
+        return False
 
 
-@app.post("/predict/wind", response_model=PredictionResponse)
-async def predict_wind(features: WindFeatures):
-    """Prédit la production éolienne de la journée en kWh"""
+def run_model_training():
+    """Lance l'entrainement des modèles"""
+    logging.info("Démarrage de l'entrainement des modèles")
+
     try:
-        logger.info(f"Prédiction éolienne avec features: {features.dict()}")
+        from scripts.train_models import main as train_models_main
 
-        predictor = ModelPredictor("wind")
-        prediction = predictor.predict(features.dict())
-
-        return PredictionResponse(
-            producer_type="wind", prediction_kwh=round(prediction, 2), status="success"
-        )
+        train_models_main()
+        logging.info("Entrainement des modèles terminés avec succès !")
+        return True
 
     except Exception as e:
-        logger.error(f"Erreur prédiction éolienne: {e}")
-        raise HTTPException(status_code=500, detail=f"Erreur de prédiction: {str(e)}")
+        logging.error(f"Erreur lors de l'entrainement des modèles: {e}")
+        return False
 
 
-@app.post("/predict/hydro", response_model=PredictionResponse)
-async def predict_hydro(features: HydroFeatures):
-    """Prédit la production hydraulique de la journée en kWh"""
+def run_api():
+    """Lance l'API pour accèder aux modèles sauvegardés"""
+    logging.info("Démarrage de l'API...")
+
     try:
-        logger.info(f"Prédiction hydraulique avec features: {features.dict()}")
+        import uvicorn
 
-        predictor = ModelPredictor("hydro")
-        prediction = predictor.predict(features.dict())
-
-        return PredictionResponse(
-            producer_type="hydro", prediction_kwh=round(prediction, 2), status="success"
+        uvicorn.run(
+            "src.api.main:app",
+            host="0.0.0.0",
+            port=8000,
+            reload=False,
+            log_level="info",
         )
+        return True
 
     except Exception as e:
-        logger.error(f"Erreur prédiction hydraulique: {e}")
-        raise HTTPException(status_code=500, detail=f"Erreur de prédiction: {str(e)}")
+        logging.error(f"Erreur lors du démarrage de l'API: {e}")
+        return False
 
 
-@app.get("/models/status")
-async def models_status():
-    """Retourne l'état des modèles chargés"""
+def run_streamlit():
+    """Lance l'application Streamlit"""
+    logging.info("Application Streamlit lancée !")
+
     try:
-        status = {}
-        for producer_type in ["solar", "wind", "hydro"]:
+        # Crée un dossier logs si nécessaire
+        os.makedirs("logs", exist_ok=True)
+
+        # Chemin vers l'app Streamlit
+        streamlit_app_path = os.path.join("src", "frontend", "app.py")
+
+        # Lance Streamlit
+        subprocess.Popen(
+            [
+                "streamlit",
+                "run",
+                streamlit_app_path,
+                "--server.port=8500",
+                "--server.address=0.0.0.0",
+                "--logger.level=info",
+            ]
+        )
+        return True
+
+    except Exception as e:
+        logging.error(f"Erreur lors du démarrage de l'application Streamlit: {e}")
+        return False
+
+
+def run_all():
+    """Lance tous les composants"""
+    logging.info("Lancement du script complet")
+
+    # 1. Pipeline de données
+    if not run_data_pipeline():
+        logging.error("Échec du pipeline de données")
+        return False
+
+    # 2. Entraînement des modèles (optionnel)
+    train_models = (
+        input("Voulez-vous lancer l'entraînement des modèles ? (o/N): ").strip().lower()
+    )
+    if train_models in ["o", "oui", "y", "yes"]:
+        if not run_model_training():
+            logging.warning("Échec de l'entraînement des modèles, continuation...")
+
+    # 3. API FastAPI (en arrière-plan)
+    logging.info("Démarrage de l'API FastAPI en arrière-plan...")
+
+    import threading
+
+    api_thread = threading.Thread(target=run_api, daemon=True)
+    api_thread.start()
+
+    # Attendre que l'API soit prête
+    import time
+
+    time.sleep(5)
+
+    # 4. Application Streamlit
+    logging.info("Démarrage de l'application Streamlit...")
+    run_streamlit()
+
+    # 5 Garder la session active
+    keep_alive()
+
+    return True
+
+
+def check_services():
+    """Vérifie le statut des services"""
+    logging.info("Vérification du statut des services...")
+
+    try:
+        import requests
+
+        # Vérifier l'API
+        try:
+            response = requests.get("http://localhost:8000/status", timeout=5)
+            api_status = "En ligne" if response.status_code == 200 else "Hors ligne"
+        except:
+            api_status = "Hors ligne"
+
+        # Vérifier Streamlit
+        try:
+            response = requests.get("http://localhost:8500", timeout=5)
+            streamlit_status = (
+                "En ligne" if response.status_code == 200 else "Hors ligne"
+            )
+        except:
+            streamlit_status = "Hors ligne"
+
+        logging.info(f"API FastAPI: {api_status}")
+        logging.info(f"Streamlit: {streamlit_status}")
+
+        # Vérifier les modèles
+        try:
+            from src.prediction.model_predictor import ModelPredictor
+
+            models_status = {}
+            for producer in ["solar", "wind", "hydro"]:
+                try:
+                    predictor = ModelPredictor(producer)
+                    models_status[producer] = "Chargé"
+                except:
+                    models_status[producer] = "Non chargé"
+
+            for producer, status in models_status.items():
+                logging.info(f"Modèle {producer}: {status}")
+
+        except Exception as e:
+            logging.warning(f"Impossible de vérifier les modèles: {e}")
+
+    except Exception as e:
+        logging.error(f"Erreur lors de la vérification des services: {e}")
+
+
+def run_predictions_only():
+    """Lance seulement les prédictions sans relancer tout le système"""
+    logging.info("Lancement des prédictions uniquement")
+
+    try:
+        # Utiliser le script dédié au lieu d'importer directement
+        from scripts.run_prediction import main as run_predictions_main
+
+        run_predictions_main()
+        return True
+
+    except Exception as e:
+        logging.error(f"Erreur lors des prédictions: {e}")
+        return False
+
+
+def kill_existing_streamlit():
+    """Tuer les processus Streamlit existants"""
+    try:
+        import psutil
+
+        for proc in psutil.process_iter(["pid", "name", "cmdline"]):
             try:
-                predictor = ModelPredictor(producer_type)
-                status[producer_type] = {
-                    "loaded": True,
-                    "model_type": type(predictor.model).__name__,
-                    "has_scaler": predictor.scaler is not None,
-                }
-            except Exception as e:
-                status[producer_type] = {"loaded": False, "error": str(e)}
-
-        return {"models_status": status}
-
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Erreur vérification modèles: {str(e)}"
+                if proc.info["cmdline"] and any(
+                    "streamlit" in cmd for cmd in proc.info["cmdline"]
+                ):
+                    logging.info(
+                        f"Arrêt du processus Streamlit existant (PID: {proc.info['pid']})"
+                    )
+                    proc.terminate()
+                    proc.wait(timeout=5)
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.TimeoutExpired):
+                pass
+    except ImportError:
+        logging.warning(
+            "psutil non installé, impossible de vérifier les processus existants"
         )
 
 
-@app.get("/forecast/solar")
-async def get_solar_forecast_predictions():
-    """
-    Retourne les prévisions de production solaire pour les prochains jours
-    """
+def keep_alive():
+    """Maintient le script actif pour garder les processus enfants vivants"""
     try:
-        logger.info("Demande de prévisions solaires...")
+        print("\n" + "=" * 60)
+        print("SYSTÈME EN FONCTIONNEMENT")
+        print("=" * 60)
+        print("API FastAPI: http://localhost:8000")
+        print("Documentation API: http://localhost:8000/docs")
+        print("Interface Streamlit: http://localhost:8500")
+        print("")
+        print("Appuyez sur Ctrl+C pour arrêter tous les services")
+        print("=" * 60)
 
-        predictor = ForecastPredictor()
-        predictions = predictor.predict_solar_forecast()
+        # Boucle de maintien en vie
+        while True:
+            time.sleep(1)  # Maintenant c'est le module time, pas datetime.time
 
-        return {
-            "producer_type": "solar",
-            "forecast_days": len(predictions),
-            "predictions": predictions,
-            "timestamp": datetime.now().isoformat(),
-        }
-
-    except Exception as e:
-        logger.error(f"Erreur prévisions solaires: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.get("/forecast/wind")
-async def get_wind_forecast_predictions():
-    """
-    Retourne les prévisions de production éolienne pour les prochains jours
-    """
-    try:
-        logger.info("Demande de prévisions éoliennes...")
-
-        predictor = ForecastPredictor()
-        predictions = predictor.predict_wind_forecast()
-
-        return {
-            "producer_type": "wind",
-            "forecast_days": len(predictions),
-            "predictions": predictions,
-            "timestamp": datetime.now().isoformat(),
-        }
-
-    except Exception as e:
-        logger.error(f"Erreur prévisions éoliennes: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    except KeyboardInterrupt:
+        print("\nArrêt du système...")
+        # Tuer les processus Streamlit existants
+        kill_existing_streamlit()
+        sys.exit(0)
 
 
-@app.get("/forecast/hydro")
-async def get_hydro_forecast_predictions():
-    """
-    Retourne les prévisions de production hydraulique
-    """
-    try:
-        logger.info("Demande de prévisions hydrauliques...")
+def main():
+    """Fonction principale avec gestion des arguments"""
 
-        predictor = ForecastPredictor()
-        predictions = predictor.predict_hydro_forecast()
+    parser = argparse.ArgumentParser(
+        description="Système de prévision de production d'énergie renouvelable",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Exemples d'utilisation:
+  python main.py all                    # Lance tous les composants
+  python main.py data                   # Lance seulement le pipeline de données
+  python main.py train                  # Lance seulement l'entraînement des modèles
+  python main.py api                    # Lance seulement l'API FastAPI
+  python main.py streamlit              # Lance seulement Streamlit
+  python main.py status                 # Vérifie le statut des services
+  python main.py predict                # Lance la prédiction de la production
+  python main.py data train             # Lance données + entraînement
+  python main.py data predict           # Lance données + prédictions
 
-        return {
-            "producer_type": "hydro",
-            "forecast_days": len(predictions),
-            "predictions": predictions,
-            "timestamp": datetime.now().isoformat(),
-        }
+        """,
+    )
 
-    except Exception as e:
-        logger.error(f"Erreur prévisions hydrauliques: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    parser.add_argument(
+        "command",
+        nargs="*",
+        default=["all"],
+        help="Commandes à exécuter: all, data, train, api, streamlit, status, predict",
+    )
+
+    parser.add_argument(
+        "--host", default="0.0.0.0", help="Adresse d'hébergement (défaut: 0.0.0.0)"
+    )
+
+    parser.add_argument(
+        "--api-port",
+        type=int,
+        default=8000,
+        help="Port de l'API FastAPI (défaut: 8000)",
+    )
+
+    parser.add_argument(
+        "--streamlit-port",
+        type=int,
+        default=8500,
+        help="Port de Streamlit (défaut: 8500)",
+    )
+
+    args = parser.parse_args()
+
+    # Créer le dossier logs
+    os.makedirs("logs", exist_ok=True)
+
+    logging.info("SYSTÈME DE PRÉVISION PRODUCTION ÉNERGIE RENOUVELABLE")
+    logging.info("=" * 60)
+
+    # Traitement des commandes
+    commands = args.command if isinstance(args.command, list) else [args.command]
+
+    success = True
+
+    for command in commands:
+        if command == "all":
+            success = run_all() and success
+        elif command == "data":
+            success = run_data_pipeline() and success
+        elif command == "train":
+            success = run_model_training() and success
+        elif command == "api":
+            success = run_api() and success
+        elif command == "streamlit":
+            success = run_streamlit() and success
+        elif command == "status":
+            check_services()
+        elif command == "predict":
+            success = run_predictions_only() and success
+        else:
+            logging.error(f"Commande inconnue: {command}")
+            parser.print_help()
+            success = False
+            break
+
+        # Pause entre les commandes
+        if len(commands) > 1 and command != commands[-1]:
+            import time
+
+            time.sleep(2)
+
+    if success:
+        logging.info("Toutes les opérations terminées avec succès !")
+    else:
+        logging.error("Certaines opérations ont échoué")
+        sys.exit(1)
 
 
-@app.get("/forecast/all")
-async def get_all_forecast_predictions():
-    """
-    Retourne toutes les prévisions de production
-    """
-    try:
-        logger.info("Demande de toutes les prévisions...")
-
-        predictor = ForecastPredictor()
-        all_predictions = predictor.predict_all_forecasts()
-
-        return all_predictions
-
-    except Exception as e:
-        logger.error(f"Erreur toutes les prévisions: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.get("/forecast/status")
-async def get_forecast_status():
-    """
-    Retourne le statut des prévisions et modèles
-    """
-    try:
-        predictor = ForecastPredictor()
-        stats = predictor.get_prediction_stats()
-
-        return {
-            "status": "operational" if stats["ready_for_prediction"] else "degraded",
-            "stats": stats,
-        }
-
-    except Exception as e:
-        logger.error(f"Erreur statut prévisions: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+if __name__ == "__main__":
+    main()

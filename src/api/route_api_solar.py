@@ -42,11 +42,19 @@ class PredictionResponse(BaseModel):
 async def predict_solar(features: SolarFeatures):
     """Prédit la production solaire de la journée en kWh"""
     try:
+<<<<<<< HEAD
         logger.info(f"Prédiction solaire avec features: {features.model_dump()}")
 
         predictor = ModelPredictor("solar")
         prediction = predictor.predict(features.model_dump())
         
+=======
+        logger.info(f"Prédiction solaire avec features: {features.dict()}")
+
+        predictor = ModelPredictor("solar")
+        prediction = predictor.predict(features.dict())
+
+>>>>>>> 8d91632 (feat(api): ajout route /solar pour prédiction solaire)
         return PredictionResponse(
             producer_type="solar",
             prediction_kwh=round(prediction, 2),
