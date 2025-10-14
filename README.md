@@ -3,6 +3,9 @@
 
 ![python](https://img.shields.io/badge/python-3.13-blue)
 ![architecture](https://img.shields.io/badge/architecture-modulaire-orange)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.119-green)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.50-red)
+![ML](https://img.shields.io/badge/ML-MachineLearning-yellow)
 
 ---
 
@@ -12,6 +15,8 @@
 - [Installation](#-installation)
 - [Configuration](#️-configuration)
 - [Utilisation](#-utilisation)
+- [API](#-api)
+- [Interface web](#-interface)
 - [Tests](#-tests)
 - [Développement](#-développement)
 - [Licence](#-licence)
@@ -34,13 +39,32 @@
 
 ### Stockage
 - Base de données **Supabase** pour le stockage  
-- Tables séparées pour données brutes et nettoyées  
+- Tables séparées pour données brutes (raw_*) et nettoyées (clean_*) 
 - Historique complet des données  
 
-### Prédictions
-- Modèles de **machine learning** pour la prédiction  
-- Facteurs de capacité de production  
-- Statistiques de performance  
+### Machine Learning
+- 3 algorithmes : Ridge, Random Forest, XGBoost
+- Modèles par type : Solaire, Éolien, Hydraulique
+- Entraînement automatique avec sélection du meilleur modèle
+- Métriques : MAE, R², RMSE
+- Sauvegarde automatique des modèles et scalers 
+
+### API
+- FastAPI avec documentation interactive
+- Endpoints de prédiction : /predict/solar, /predict/wind, /predict/hydro
+- Validation avec Pydantic
+- Statut des modèles en temps réel
+
+### Interface Web
+- Streamlit pour la visualisation
+- Formulaires interactifs avec sliders
+- Graphiques avec Plotly
+- Prédictions en temps réel
+
+### Autmatisation
+- Script principal avec arguments
+- Lancement sélectif des composants
+- Pipeline complet données → entraînement → API → Interface
 
 ---
 
@@ -48,15 +72,15 @@
 ```
 Prediction_Production_EnR
 ├──archives
-│   ├──expo_solaire.py
-│   ├──producteur_solaire.py
-│   └──producteur.py
-├──notebooks
+├──docs
+├──logs
 ├──scripts
 │   ├──__init__.py
-│   └──daily_fetch.py
+│   ├──daily_fetch.py
+│   └──train_models.py
 ├──src
 │   ├──api
+│   │   ├──__init__.py
 │   │   ├──main.py
 │   │   └──utils.py
 │   ├──config
@@ -74,7 +98,6 @@ Prediction_Production_EnR
 │   │   │   └──fetch_production.py
 │   │   ├──handlers
 │   │   │   ├──__init__.py
-│   │   │   ├──db_models.py
 │   │   │   ├──etl_supabase.py
 │   │   │   ├──handler_hubeau.py
 │   │   │   └──handler_meteo.py
@@ -83,21 +106,29 @@ Prediction_Production_EnR
 │   │   │   └──data_cleaner.py
 │   │   └──__init__.py
 │   ├──frontend
+│   │   ├──__init__.py
 │   │   └──app.py
 │   ├──models
+│   │   ├──saved
+│   │   │   ├──hydro_random_forest_model.pkl
+│   │   │   ├──hydro_scaler.pkl
+│   │   │   ├──hydro_xgboost_model.pkl
+│   │   │   ├──solar_ridge_model.pkl
+│   │   │   ├──solar_scaler.pkl
+│   │   │   ├──wind_random_forest_model.pkl
+│   │   │   └──wind_scaler.pkl
 │   │   ├──__init__.py
-│   │   ├──feature_engineering.py
-│   │   ├──predict.py
-│   │   └──train_model.py
+│   │   ├──data_loarder.py
+│   │   ├──model_config.py
+│   │   └──model_trainer.py
+│   ├──prediction
+│   │   └──model_predictor.py
 │   ├──producers
 │   │   ├──__init__.py
 │   │   ├──base_producer.py
 │   │   ├──hydro_producer.py
 │   │   ├──solar_producer.py
 │   │   └──wind_producer.py
-│   ├──utils
-│   │   ├──helpers.py
-│   │   └──visualization.py
 │   └──__init__.py
 ├──tests
 │   ├──test_api_config.py
@@ -119,6 +150,7 @@ Prediction_Production_EnR
 ├──pyproject.toml
 ├──pytest.ini
 ├──README.md
+├──run_api.py
 ├──setup.py
 ├──uv.lock
 ├──.gitignore
@@ -132,13 +164,13 @@ Prediction_Production_EnR
 ### Prérequis
 - Python **3.13+**
 - Compte **Supabase**
-- Clés API pour **Open-Meteo** et **Hub'Eau**
+- Accès aux API **Open-Meteo** et **Hub'Eau**
 
 ### Installation pas à pas
 
 #### 1. Cloner le repository
 ```bash
-git clone https://github.com/your-username/Prediction_Production_EnR.git
+git clone https://github.com/loicgoi/Prediction_Production_EnR.git
 cd Prediction_Production_EnR
 ```
 
@@ -188,6 +220,7 @@ HYDRO_NOMINAL_POWER=200.0
 
 # Chemins des données
 DATA_RAW_PATH=data/raw
+MODELS_PATH=models/saved
 ```
 
 ### Configuration des APIs  
@@ -216,19 +249,36 @@ HUBEAU_CONFIG = {
 
 ## Utilisation
 
-### 1. Récupération de toutes les données
+### 1. Lancement complet
 ```python
-from src.data_ingestion.fetchers.fetch_all import fetch_all
-
-# Récupère toutes les données et les envoie dans Supabase
-results = fetch_all()
-print(f"Données solaires: {len(results['solar_history'])} enregistrements")
-print(f"Données éoliennes: {len(results['wind_history'])} enregistrements")
-print(f"Données hydrauliques: {len(results['hubeau'])} enregistrements")
+# Lance tous les composants : données → entraînement → API → Streamlit
+python main.py all
 ```
 
-### 2. Utilisation des producteurs   
+### 2. Commandes modulaires  
 ```python 
+# Pipeline de données seulement
+python main.py data
+
+# Entraînement des modèles seulement
+python main.py train
+
+# API FastAPI seulement
+python main.py api
+
+# Interface Streamlit seulement  
+python main.py streamlit
+
+# Vérification du statut
+python main.py status
+
+# Combinaisons
+python main.py data train      # Données + entraînement
+python main.py api streamlit   # API + interface
+```
+
+### 3. Utilisations des producteurs
+```python
 from src.producers.solar_producer import SolarProducer
 from datetime import date
 
@@ -251,7 +301,7 @@ print(f"Production totale: {stats['total_production']} kWh")
 print(f"Facteur de capacité: {stats['capacity_factor']:.2%}")
 ```
 
-### 3. Récupération données météo
+### 4. Récupération données météo
 ```python
 from src.data_ingestion.handlers.handler_meteo import WeatherDataHandler
 
@@ -269,8 +319,64 @@ wind_handler = WeatherDataHandler(43.6109, 3.8763, "wind")
 wind_forecast = wind_handler.load(forecast=True)
 ```
 
-### 4. Lancement de l'API
--- à venir --
+---
+
+## API
+
+### Démarrage de l'API
+
+```bash
+python main.py api
+# ou directement
+uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+### Endpoints disponibles
+
+
+|        Endpoint	    |     Méthode     |       Description       |
+| :-------------------- |:---------------:| -----------------------:|
+| GET /	                |      GET	      | Page d'accueil          |
+| GET /health	        |      GET        | Statut de l'API         |
+| GET /models/status	|      GET        | Statut des modèles      |
+| POST /predict/solar   |	   POST       | Prédiction solaire      |
+| POST /predict/win     |      POST	      | Prédiction éolienne     |
+| POST /predict/hydro   |	   POST	      | Prédiction hydraulique  |
+
+### Exemple de prédiction
+
+```bash
+# Prédiction solaire
+curl -X POST "http://localhost:8000/predict/solar" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "temperature_2m_mean": 18.5,
+       "shortwave_radiation_sum_kwh_m2": 4.8,
+       "sunshine_duration": 45000,
+       "cloud_cover_mean": 25.0,
+       "relative_humidity_2m_mean": 65.0
+     }'
+```
+
+### Documentation interactive
+- Swagger UI : http://localhost:8000/docs
+- Redoc : http://localhost:8000/redoc
+
+---
+
+## Interface Web
+
+### Démarrage de Streamlit
+
+```bash
+python main.py streamlit
+# ou directement
+streamlit run src/frontend/app.py
+```
+
+### Accès
+
+- Interface principale : http://localhost:8500
 
 ---
 
@@ -290,12 +396,12 @@ pytest tests/test_handlers.py -v
 ```
 
 ### Structure des tests
-
-- 57 tests unitaires couvrant toutes les fonctionnalités  
+ 
 - Tests des producteurs : solaire, éolien, hydraulique  
 - Tests des handlers : données météo et Hub'Eau  
 - Tests des cleaners : nettoyage des données  
 - Tests des APIs : configuration et endpoints  
+- Tests des modèles : entraînement et prédictions  
 
 ---
 
@@ -323,9 +429,29 @@ class NewProducer(BaseProducer):
 
 ### Ajouter une nouvelle source de données
 
-- Créer un fetcher dans src/data_ingestion/fetchers/  
-- Créer un handler dans src/data_ingestion/handlers/  
-- Ajouter les méthodes de nettoyage dans DataCleaner  
+- Créer un fetcher dans **_src/data_ingestion/fetchers/_**  
+- Créer un handler dans **_src/data_ingestion/handlers/_**  
+- Ajouter les méthodes de nettoyage dans **_DataCleaner_**  
+
+
+### Worflow de développement
+
+```bash
+# 1. Récupérer les données
+python main.py data
+
+# 2. Entraîner les modèles  
+python main.py train
+
+# 3. Tester l'API
+python main.py api
+
+# 4. Tester l'interface
+python main.py streamlit
+
+# 5. Vérifier le statut
+python main.py status
+```
 
 ---
 
@@ -333,3 +459,10 @@ class NewProducer(BaseProducer):
 Ce projet n'est pas sous licence open-source.  
 Il a été développé dans le cadre d’un projet scolaire et est destiné à un usage éducatif uniquement.  
 Toute réutilisation ou diffusion du code nécessite l’accord préalable de l’auteur.
+
+## Auteurs
+**Équipe de développement**
+- Loïc - Chaïma - Fadilatou : Développement principal
+
+**Supervision**
+- Nadège

@@ -42,9 +42,3 @@ def main():
     except Exception as e:
         logging.error(f"Erreur lors de la récupération: {e}")
         sys.exit(1)
-
-
-if __name__ == "__main__":
-    # Créer le dossier logs s'il n'existe pas
-    os.makedirs("logs", exist_ok=True)
-    main()
