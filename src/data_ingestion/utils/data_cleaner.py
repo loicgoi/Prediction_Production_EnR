@@ -356,7 +356,6 @@ class DataCleaner:
 
         return df
 
-    # Les autres méthodes statiques restent inchangées...
     @staticmethod
     def _remove_duplicates(df: pd.DataFrame, subset: str) -> pd.DataFrame:
         """Supprime les doublons basés sur une colonne."""
