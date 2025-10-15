@@ -8,15 +8,7 @@ class DataCleaner:
     @staticmethod
     def clean_solar_data(df: pd.DataFrame) -> pd.DataFrame:
         """
-<<<<<<< HEAD
-<<<<<<< HEAD
         Nettoie les données solaires - POUR TABLES CLEAN AVEC CONVERSIONS
-=======
-        Nettoie les données solaires avec toutes les vérifications de expo_solaire.py
->>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
-=======
-        Nettoie les données solaires - POUR TABLES CLEAN AVEC CONVERSIONS
->>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
         """
         if df.empty:
             return df
@@ -31,10 +23,6 @@ class DataCleaner:
         if "date" in df_clean.columns:
             df_clean["date"] = pd.to_datetime(df_clean["date"])
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
         # CORRECTION : Appliquer les conversions UNIQUEMENT pour les données clean
         df_clean = DataCleaner._convert_solar_units_for_clean_tables(df_clean)
 
@@ -56,15 +44,6 @@ class DataCleaner:
         # Garder uniquement les colonnes disponibles
         available_cols = [col for col in relevant_cols if col in df_clean.columns]
         df_clean = df_clean[available_cols]
-<<<<<<< HEAD
-=======
-        # Conversion sunrise/sunset
-        for col in ["sunrise", "sunset"]:
-            if col in df_clean.columns:
-                df_clean[col] = pd.to_datetime(df_clean[col])
->>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
-=======
->>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
 
         # Suppression des doublons
         df_clean = DataCleaner._remove_duplicates(df_clean, "date")
@@ -75,8 +54,6 @@ class DataCleaner:
         # Vérification valeurs aberrantes
         df_clean = DataCleaner._check_solar_outliers(df_clean)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
         return df_clean
 
     @staticmethod
@@ -93,89 +70,6 @@ class DataCleaner:
         # Renommage basique
         if "time" in df_raw.columns:
             df_raw = df_raw.rename(columns={"time": "date"})
-
-        # Conversion datetime uniquement
-        if "date" in df_raw.columns:
-            df_raw["date"] = pd.to_datetime(df_raw["date"])
-
-        # CORRECTION CRITIQUE : NE PAS APPLIQUER LES CONVERSIONS DU TOUT
-        # Garder TOUTES les colonnes originales sans modifications
-        # Les tables raw attendent shortwave_radiation_sum (pas kwh_m2)
-
-        # Sélection des colonnes POUR TABLES RAW (noms originaux)
-        relevant_cols_raw = [
-            "date",
-            "temperature_2m_max",
-            "temperature_2m_min",
-            "temperature_2m_mean",
-            "shortwave_radiation_sum",  # Nom ORIGINAL pour tables raw
-            "sunshine_duration",
-            "daylight_duration",
-            "cloud_cover_mean",
-            "relative_humidity_2m_mean",
-            "precipitation_sum",
-            "wind_speed_10m_mean",
-        ]
-
-        # Garder uniquement les colonnes disponibles
-        available_cols = [col for col in relevant_cols_raw if col in df_raw.columns]
-        df_raw = df_raw[available_cols]
-
-        return df_raw
-
-    @staticmethod
-    def clean_hydro_data(df: pd.DataFrame) -> pd.DataFrame:
-        """Nettoie les données hydrauliques - POUR TABLES CLEAN."""
-=======
-        # Conversion des unités
-        df_clean = DataCleaner._convert_solar_units(df_clean)
-
-        return df_clean
-
-    @staticmethod
-    def clean_wind_data(df: pd.DataFrame) -> pd.DataFrame:
-        """Nettoie les données éoliennes."""
->>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
-=======
-        return df_clean
-
-    @staticmethod
-    def prepare_solar_data_raw(df: pd.DataFrame) -> pd.DataFrame:
-        """
-        Prépare les données solaires brutes - SANS AUCUNE CONVERSION
-        Pour les tables raw_*
-        """
->>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
-        if df.empty:
-            return df
-
-        df_raw = df.copy()
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-        # CORRECTION : Pour clean_hubeau, utiliser 'date' et 'debit_l_s'
-        if "date_obs_elab" in df_clean.columns:
-            df_clean = df_clean.rename(columns={"date_obs_elab": "date"})
-
-        # CORRECTION : Utiliser 'debit_l_s' pour clean_hubeau (nom de la table)
-        if "result_obs_elab" in df_clean.columns:
-            df_clean = df_clean.rename(columns={"result_obs_elab": "debit_l_s"})
-        # CORRECTION : Gérer aussi le nom 'resultat_obs_elab' venant de l'API
-        elif "resultat_obs_elab" in df_clean.columns:
-            df_clean = df_clean.rename(columns={"resultat_obs_elab": "debit_l_s"})
-
-        # Conversion des types
-        if "date" in df_clean.columns:
-            df_clean["date"] = pd.to_datetime(df_clean["date"])
-=======
-        # Renommage
-        if "time" in df_clean.columns:
-            df_clean = df_clean.rename(columns={"time": "date"})
-=======
-        # Renommage basique
-        if "time" in df_raw.columns:
-            df_raw = df_raw.rename(columns={"time": "date"})
->>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
 
         # Conversion datetime uniquement
         if "date" in df_raw.columns:
@@ -227,22 +121,13 @@ class DataCleaner:
 
         # Conversion des types
         if "date" in df_clean.columns:
-<<<<<<< HEAD
-            df_clean["date"] = pd.to_datetime(df_clean["date"]).dt.date
->>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
-=======
             df_clean["date"] = pd.to_datetime(df_clean["date"])
->>>>>>> 5594093 (màj des test + commentires code + README.md)
 
         if "debit_l_s" in df_clean.columns:
             df_clean["debit_l_s"] = pd.to_numeric(
                 df_clean["debit_l_s"], errors="coerce"
             )
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
         # Suppression des colonnes inutiles
         columns_to_drop = [
             "code_site",
@@ -265,11 +150,6 @@ class DataCleaner:
         if existing_columns_to_drop:
             df_clean = df_clean.drop(columns=existing_columns_to_drop)
 
-<<<<<<< HEAD
-=======
->>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
-=======
->>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
         # Suppression des doublons
         df_clean = DataCleaner._remove_duplicates(df_clean, "date")
 
@@ -281,10 +161,6 @@ class DataCleaner:
         return df_clean
 
     @staticmethod
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
     def prepare_hydro_data_raw(df: pd.DataFrame) -> pd.DataFrame:
         """
         Prépare les données hydrauliques brutes - SANS NETTOYAGE
@@ -376,11 +252,6 @@ class DataCleaner:
         return df_raw
 
     @staticmethod
-<<<<<<< HEAD
-=======
->>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
-=======
->>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
     def clean_production_data(df: pd.DataFrame, producer_type: str) -> pd.DataFrame:
         """Nettoie les données de production."""
         if df.empty:
@@ -402,15 +273,7 @@ class DataCleaner:
 
         # Conversion des types
         if "date" in df_clean.columns:
-<<<<<<< HEAD
-<<<<<<< HEAD
             df_clean["date"] = pd.to_datetime(df_clean["date"])
-=======
-            df_clean["date"] = pd.to_datetime(df_clean["date"]).dt.date
->>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
-=======
-            df_clean["date"] = pd.to_datetime(df_clean["date"])
->>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
 
         if "production_kwh" in df_clean.columns:
             df_clean["production_kwh"] = pd.to_numeric(
@@ -432,10 +295,6 @@ class DataCleaner:
         return df_clean
 
     @staticmethod
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
     def prepare_production_data_raw(
         df: pd.DataFrame, producer_type: str
     ) -> pd.DataFrame:
@@ -497,14 +356,7 @@ class DataCleaner:
 
         return df
 
-<<<<<<< HEAD
     @staticmethod
-=======
->>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
-=======
-    # Les autres méthodes statiques restent inchangées...
-    @staticmethod
->>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
     def _remove_duplicates(df: pd.DataFrame, subset: str) -> pd.DataFrame:
         """Supprime les doublons basés sur une colonne."""
         if subset in df.columns:
@@ -532,13 +384,6 @@ class DataCleaner:
     @staticmethod
     def _check_solar_outliers(df: pd.DataFrame) -> pd.DataFrame:
         """Vérifie les valeurs aberrantes pour les données solaires."""
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-        # Limites physiques
->>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
-=======
->>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
         limits = {
             "temperature_2m_max": (-20, 50),
             "temperature_2m_min": (-30, 40),
@@ -551,13 +396,6 @@ class DataCleaner:
                 if outliers.any():
                     logging.warning(f"Valeurs aberrantes détectées dans {col}")
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-        # Cohérence entre durée d'ensoleillement et durée du jour
->>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
-=======
->>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
         if all(col in df.columns for col in ["sunshine_duration", "daylight_duration"]):
             invalid = df["sunshine_duration"] > df["daylight_duration"]
             if invalid.any():
@@ -566,10 +404,6 @@ class DataCleaner:
         return df
 
     @staticmethod
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
     def _remove_outliers(
         df: pd.DataFrame, col: str, min_val: float, max_val: float
     ) -> pd.DataFrame:
@@ -580,23 +414,3 @@ class DataCleaner:
         if removed > 0:
             logging.warning(f"{removed} valeurs aberrantes supprimées dans {col}")
         return df_clean
-<<<<<<< HEAD
-=======
-    def _convert_solar_units(df: pd.DataFrame) -> pd.DataFrame:
-        """Convertit les unités des données solaires."""
-        # Conversion secondes -> heures
-        if "sunshine_duration" in df.columns:
-            df["sunshine_duration_h"] = df["sunshine_duration"] / 3600
-        if "daylight_duration" in df.columns:
-            df["daylight_duration_h"] = df["daylight_duration"] / 3600
-
-        # Conversion MJ/m² -> kWh/m²
-        if "shortwave_radiation_sum" in df.columns:
-            df["shortwave_radiation_sum_kwh_m2"] = (
-                df["shortwave_radiation_sum"] * 0.27778
-            )
-
-        return df
->>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
-=======
->>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
