@@ -14,7 +14,7 @@ st.set_page_config(
 
 st.title("Application de Prédiction de Production d'énergie renouvelable")
 st.markdown("""
-Notre super app de prédiction boostée par l'IA Made in France!  
+Notre app de prédiction boostée par l'IA .  
 Sélectionnez un onglet pour interagir avec l'API.
 """)
 
@@ -65,7 +65,17 @@ def make_prediction(endpoint_name):
             response = requests.post(f"{API_URL}/predict/{endpoint_name}", json=payload)
             if response.ok:
                 st.success(f"Prédiction {endpoint_name} reçue !")
-                st.json(response.json())
+                
+                data = response.json()
+                
+                # Transformer en DataFrame pour affichage clair
+                # Exemple attendu : {"model_name": "solar_ridge", "prediction": 123.45, "status": "OK"}
+                if isinstance(data, dict):
+                    df = pd.DataFrame([data])
+                    df['Remarque'] = df['status'].apply(lambda x: "Yes" if x.lower() == "ok" else "No")
+                    st.table(df[['model_name', 'prediction', 'Remarque']])
+                else:
+                    st.json(data)
             else:
                 st.error(f"Erreur API : {response.text}")
         except Exception as e:
@@ -89,7 +99,14 @@ elif page == "Status des Modèles":
     try:
         response = requests.get(f"{API_URL}/models/status")
         if response.ok:
-            st.json(response.json())
+            data = response.json()
+            
+            # Transformer en DataFrame
+            # Exemple attendu : [{"model_name": "solar_ridge", "status": "OK"}, {"model_name": "wind_rf", "status": "KO"}]
+            df = pd.DataFrame(data)
+            df['Remarque'] = df['status'].apply(lambda x: "✔️" if x.lower() == "ok" else "❌")
+            
+            st.table(df[['model_name', 'Remarque']])
         else:
             st.error("Erreur lors de la récupération du status des modèles")
     except Exception as e:
