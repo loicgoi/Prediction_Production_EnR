@@ -1,18 +1,8 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 5594093 (màj des test + commentires code + README.md)
 from src.data_ingestion.api.api_config import (
     HUBEAU_CONFIG,
     OPEN_METEO_CONFIG,
     DATA_FILES,
 )
-<<<<<<< HEAD
-=======
-from data_ingestion.api.api_config import HUBEAU_CONFIG, OPEN_METEO_CONFIG, DATA_FILES
->>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
-=======
->>>>>>> 5594093 (màj des test + commentires code + README.md)
 
 
 def test_hubeau_config():
