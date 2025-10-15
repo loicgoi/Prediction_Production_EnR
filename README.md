@@ -63,17 +63,80 @@
 - Lancement sélectif des composants
 - Pipeline complet données → entraînement → API → Interface
 
+### Prédiction
+- Script de lancement d'une prédiction de production d'énergie sur les 16 prochains jours
+- Lancement autonome hors script principal
+
 ---
 
 ## Architecture
 ```
 Prediction_Production_EnR
 ├──archives
+│   ├──expo_solaire.py
+│   ├──producteur_solaire.py
+│   └──producteur.py
 ├──docs
+│   ├──scripts
+│   │   ├──daily_fetch.html
+│   │   ├──run_prediction.html
+│   │   └──train_models.html
+│   ├──src
+│   │   ├──api
+│   │   │   ├──main.html
+│   │   │   └──utils.html
+│   │   ├──data_ingestion
+│   │   │   ├──api
+│   │   │   │   └──api_config.html
+│   │   │   ├──fetchers
+│   │   │   │   ├──fetch_all.html
+│   │   │   │   ├──fetch_hubeau.html
+│   │   │   │   ├──fetch_open_meteo_eolien.html
+│   │   │   │   ├──fetch_open_meteo_solaire.html
+│   │   │   │   └──fetch_production.html
+│   │   │   ├──handlers
+│   │   │   │   ├──etl_supabase.html
+│   │   │   │   ├──handler_hubeau.html
+│   │   │   │   └──handler_meteo.html
+│   │   │   ├──utils
+│   │   │   │   └──data_cleaner.html
+│   │   │   ├──api.html
+│   │   │   ├──fetchers.html
+│   │   │   ├──handlers.html
+│   │   │   └──utils.html
+│   │   ├──frontend
+│   │   │   └──app.html
+│   │   ├──models
+│   │   │   ├──data_loarder.html
+│   │   │   ├──model_config.html
+│   │   │   └──model_trainer.html
+│   │   ├──prediction
+│   │   │   ├──forecast_predictor.html
+│   │   │   ├──forecast_service.html
+│   │   │   └──model_predictor.html
+│   │   ├──producers
+│   │   │   ├──base_producer.html
+│   │   │   ├──hydro_producer.html
+│   │   │   ├──solar_producer.html
+│   │   │   └──wind_producer.html
+│   │   ├──api.html
+│   │   ├──data_ingestion.html
+│   │   ├──frontend.html
+│   │   ├──models.html
+│   │   ├──prediction.html
+│   │   └──producers.html
+│   ├──index.html
+│   ├──main.html
+│   ├──run_api.html
+│   ├──scripts.html
+│   ├──search.js
+│   └──src.html
 ├──logs
+├──notebooks
 ├──scripts
 │   ├──__init__.py
 │   ├──daily_fetch.py
+│   ├──run_prediction.py
 │   └──train_models.py
 ├──src
 │   ├──api
@@ -119,6 +182,9 @@ Prediction_Production_EnR
 │   │   ├──model_config.py
 │   │   └──model_trainer.py
 │   ├──prediction
+│   │   ├──__init__.py
+│   │   ├──forecast_predictor.py
+│   │   ├──forecast_service.py
 │   │   └──model_predictor.py
 │   ├──producers
 │   │   ├──__init__.py
@@ -331,14 +397,19 @@ uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
 ### Endpoints disponibles
 
 
-|        Endpoint	    |     Méthode     |       Description       |
-| :-------------------- |:---------------:| -----------------------:|
-| GET /	                |      GET	      | Page d'accueil          |
-| GET /health	        |      GET        | Statut de l'API         |
-| GET /models/status	|      GET        | Statut des modèles      |
-| POST /predict/solar   |	   POST       | Prédiction solaire      |
-| POST /predict/win     |      POST	      | Prédiction éolienne     |
-| POST /predict/hydro   |	   POST	      | Prédiction hydraulique  |
+|        Endpoint	    |     Méthode     |            Description            |
+| :-------------------- |:---------------:| ---------------------------------:|
+| GET /	                |      GET	      | Page d'accueil                    |
+| GET /health	        |      GET        | Statut de l'API                   |
+| GET /models/status	|      GET        | Statut des modèles                |
+| POST /predict/solar   |	   POST       | Prédiction solaire                |
+| POST /predict/win     |      POST	      | Prédiction éolienne               |
+| POST /predict/hydro   |	   POST	      | Prédiction hydraulique            |
+| GET /forecast/solar   |      GET        | Renvoi Prédiction Solaire         |
+| GET /forecast/wind    |      GET        | Renvoi Prédiction Eolienne        |
+| GET /forecast/hydro   |      GET        | Renvoi Prédiction Hydro           |
+| GET /forecast/all     |      GET        | Renvoi toutes Prédictions         |
+| GET /forecast/status  |      GET        | Statut des Prédictions et modèles |
 
 ### Exemple de prédiction
 
@@ -448,6 +519,9 @@ python main.py streamlit
 
 # 5. Vérifier le statut
 python main.py status
+
+# 6. Lancer la prédiction
+python main.py predict
 ```
 
 ---
