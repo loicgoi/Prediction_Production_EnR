@@ -3,6 +3,8 @@ from pydantic import BaseModel
 from typing import Optional
 import logging
 from src.prediction.model_predictor import ModelPredictor
+from src.prediction.forecast_predictor import ForecastPredictor
+import datetime
 
 # Configuration du logging
 logging.basicConfig(level=logging.INFO)
@@ -136,3 +138,109 @@ async def models_status():
         raise HTTPException(
             status_code=500, detail=f"Erreur vérification modèles: {str(e)}"
         )
+
+
+@app.get("/forecast/solar")
+async def get_solar_forecast_predictions():
+    """
+    Retourne les prévisions de production solaire pour les prochains jours
+    """
+    try:
+        logger.info("Demande de prévisions solaires...")
+
+        predictor = ForecastPredictor()
+        predictions = predictor.predict_solar_forecast()
+
+        return {
+            "producer_type": "solar",
+            "forecast_days": len(predictions),
+            "predictions": predictions,
+            "timestamp": datetime.now().isoformat(),
+        }
+
+    except Exception as e:
+        logger.error(f"Erreur prévisions solaires: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/forecast/wind")
+async def get_wind_forecast_predictions():
+    """
+    Retourne les prévisions de production éolienne pour les prochains jours
+    """
+    try:
+        logger.info("Demande de prévisions éoliennes...")
+
+        predictor = ForecastPredictor()
+        predictions = predictor.predict_wind_forecast()
+
+        return {
+            "producer_type": "wind",
+            "forecast_days": len(predictions),
+            "predictions": predictions,
+            "timestamp": datetime.now().isoformat(),
+        }
+
+    except Exception as e:
+        logger.error(f"Erreur prévisions éoliennes: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/forecast/hydro")
+async def get_hydro_forecast_predictions():
+    """
+    Retourne les prévisions de production hydraulique
+    """
+    try:
+        logger.info("Demande de prévisions hydrauliques...")
+
+        predictor = ForecastPredictor()
+        predictions = predictor.predict_hydro_forecast()
+
+        return {
+            "producer_type": "hydro",
+            "forecast_days": len(predictions),
+            "predictions": predictions,
+            "timestamp": datetime.now().isoformat(),
+        }
+
+    except Exception as e:
+        logger.error(f"Erreur prévisions hydrauliques: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/forecast/all")
+async def get_all_forecast_predictions():
+    """
+    Retourne toutes les prévisions de production
+    """
+    try:
+        logger.info("Demande de toutes les prévisions...")
+
+        predictor = ForecastPredictor()
+        all_predictions = predictor.predict_all_forecasts()
+
+        return all_predictions
+
+    except Exception as e:
+        logger.error(f"Erreur toutes les prévisions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/forecast/status")
+async def get_forecast_status():
+    """
+    Retourne le statut des prévisions et modèles
+    """
+    try:
+        predictor = ForecastPredictor()
+        stats = predictor.get_prediction_stats()
+
+        return {
+            "status": "operational" if stats["ready_for_prediction"] else "degraded",
+            "stats": stats,
+        }
+
+    except Exception as e:
+        logger.error(f"Erreur statut prévisions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
