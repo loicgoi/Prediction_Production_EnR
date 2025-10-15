@@ -135,8 +135,4 @@ async def models_status():
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Erreur vérification modèles: {str(e)}"
-<<<<<<< HEAD
         )
-=======
-        )
->>>>>>> 0ece31b (feat(api): ajout route /solar pour prédiction solaire)
