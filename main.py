@@ -1,5 +1,4 @@
 import logging
-<<<<<<< HEAD
 import argparse
 import sys
 import os
@@ -17,18 +16,6 @@ logging.basicConfig(
 def run_data_pipeline():
     logging.info("Démarrage du pipeline de données")
 
-=======
-from src.data_ingestion.fetchers.fetch_all import fetch_all
-
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-
-
-def main():
-    logging.info("Démarrage du pipeline de données")
-
->>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
     try:
         # Récupération de toutes les données
         results = fetch_all()
@@ -41,7 +28,6 @@ def main():
                 logging.info(f"{key}: Données récupérées")
 
         logging.info("Pipeline terminé avec succès !")
-<<<<<<< HEAD
         return True
 
     except Exception as e:
@@ -336,12 +322,6 @@ python main.py data train             # Lance données + entraînement
     else:
         logging.error("Certaines opérations ont échoué")
         sys.exit(1)
-=======
-
-    except Exception as e:
-        logging.error(f"Erreur lors de l'exécution du pipeline: {e}")
-        raise
->>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
 
 
 if __name__ == "__main__":
