@@ -56,10 +56,7 @@
 - Statut des modèles en temps réel
 
 ### Interface Web
-- Streamlit pour la visualisation
-- Formulaires interactifs avec sliders
-- Graphiques avec Plotly
-- Prédictions en temps réel
+- **En cours de développement**
 
 ### Automatisation
 - Script principal avec arguments
