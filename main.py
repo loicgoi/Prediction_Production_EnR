@@ -189,6 +189,22 @@ def check_services():
         logging.error(f"Erreur lors de la vérification des services: {e}")
 
 
+def run_predictions_only():
+    """Lance seulement les prédictions sans relancer tout le système"""
+    logging.info("Lancement des prédictions uniquement")
+
+    try:
+        # Utiliser le script dédié au lieu d'importer directement
+        from scripts.run_prediction import main as run_predictions_main
+
+        run_predictions_main()
+        return True
+
+    except Exception as e:
+        logging.error(f"Erreur lors des prédictions: {e}")
+        return False
+
+
 def kill_existing_streamlit():
     """Tuer les processus Streamlit existants"""
     try:
@@ -244,6 +260,7 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Exemples d'utilisation:
+<<<<<<< HEAD
 python main.py all                    # Lance tous les composants
 python main.py data                   # Lance seulement le pipeline de données
 python main.py train                  # Lance seulement l'entraînement des modèles
@@ -251,6 +268,18 @@ python main.py api                    # Lance seulement l'API FastAPI
 python main.py streamlit              # Lance seulement Streamlit
 python main.py status                 # Vérifie le statut des services
 python main.py data train             # Lance données + entraînement
+=======
+  python main.py all                    # Lance tous les composants
+  python main.py data                   # Lance seulement le pipeline de données
+  python main.py train                  # Lance seulement l'entraînement des modèles
+  python main.py api                    # Lance seulement l'API FastAPI
+  python main.py streamlit              # Lance seulement Streamlit
+  python main.py status                 # Vérifie le statut des services
+  python main.py predict                # Lance la prédiction de la production
+  python main.py data train             # Lance données + entraînement
+  python main.py data predict           # Lance données + prédictions
+
+>>>>>>> 9146ccc (ajout du système de prediction sur les données journalières : solaire, éolienne et hydro)
         """,
     )
 
@@ -258,7 +287,7 @@ python main.py data train             # Lance données + entraînement
         "command",
         nargs="*",
         default=["all"],
-        help="Commandes à exécuter: all, data, train, api, streamlit, status",
+        help="Commandes à exécuter: all, data, train, api, streamlit, status, predict",
     )
 
     parser.add_argument(
@@ -305,6 +334,8 @@ python main.py data train             # Lance données + entraînement
             success = run_streamlit() and success
         elif command == "status":
             check_services()
+        elif command == "predict":
+            success = run_predictions_only() and success
         else:
             logging.error(f"Commande inconnue: {command}")
             parser.print_help()
