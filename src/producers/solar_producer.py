@@ -1,62 +1,8 @@
-<<<<<<< HEAD
 import pandas as pd
 from .base_producer import BaseProducer
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 from src.data_ingestion.utils.data_cleaner import DataCleaner
-=======
-=======
->>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
-=======
->>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
-from data_ingestion.handlers.etl_supabase import CSVDataHandler
-from data_ingestion.utils.data_cleaner import DataCleaner
-<<<<<<< HEAD
->>>>>>> 6242f1e (restructuration des fichiers + tests fonctionnels)
-=======
-<<<<<<< HEAD
->>>>>>> 0497523 (restructuration des fichiers + tests fonctionnels)
 from datetime import date
 from typing import Dict, Any
-=======
-from datetime import date
-import pandas as pd
-from .base_producer import BaseProducer
-<<<<<<< HEAD
-from ..data_ingestion.etl_supabase import CSVDataHandler
-from ..data_ingestion.data_cleaner import DataCleaner
-<<<<<<< HEAD
->>>>>>> cbfd918 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
-=======
->>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> f4c8067 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
-=======
-=======
-=======
-from data_ingestion.etl_supabase import CSVDataHandler
-from data_ingestion.data_cleaner import DataCleaner
->>>>>>> 3c7ab3c (réalisation des tests + correction erreurs d'import)
-<<<<<<< HEAD
->>>>>>> 049f2e8 (réalisation des tests + correction erreurs d'import)
-=======
-=======
->>>>>>> b95c547 (restructuration des fichiers + tests fonctionnels)
-<<<<<<< HEAD
->>>>>>> 0497523 (restructuration des fichiers + tests fonctionnels)
-=======
-=======
-from src.data_ingestion.handlers.etl_supabase import SupabaseHandler
-=======
->>>>>>> a01c904 (correction problème de double import dans supabase + correction dans la séparation raw / clean)
-from src.data_ingestion.utils.data_cleaner import DataCleaner
->>>>>>> bf6ca9a (refacto code + ajout du main.py fonctionnel)
->>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
-from datetime import date
-from typing import Dict, Any
->>>>>>> bf9101c (refacto solar_producer)
 
 
 class SolarProducer(BaseProducer):
@@ -67,15 +13,6 @@ class SolarProducer(BaseProducer):
     def __init__(self, name: str, location: str, nominal_power: float, data_file: str):
         """
         Initialise un producteur solaire.
-<<<<<<< HEAD
-
-        Args:
-            name (str): Nom du producteur
-            location (str): Localisation du producteur
-            nominal_power (float): Puissance nominale en KWc
-            data_file (str): Chemin vers le fichier de données de production
-=======
->>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
 
         Args:
             name (str): Nom du producteur
@@ -85,28 +22,9 @@ class SolarProducer(BaseProducer):
         """
         super().__init__(name, location, nominal_power)
         self.data_file = data_file
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-        self.data_handler = SupabaseHandler(data_file)
->>>>>>> 65ccff1 (refacto code + ajout du main.py fonctionnel)
-=======
->>>>>>> a45646a (correction problème de double import dans supabase + correction dans la séparation raw / clean)
 
     def load_production_data(self, start_date: date, end_date: date) -> pd.DataFrame:
         """
-<<<<<<< HEAD
-        Charge les données solaires depuis un CSV
-
-        Args:
-            start_date (date): Date de début
-            end_date (date): Date de fin
-
-        Returns:
-            pd.DataFrame: DataFrame avec les données de production solaire
-=======
-        Charge les données de production solaire entre deux dates.
->>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
         Charge les données solaires depuis un CSV
 
         Args:
@@ -120,36 +38,9 @@ class SolarProducer(BaseProducer):
             # Charger directement avec pandas
             df = pd.read_csv(self.data_file)
 
-<<<<<<< HEAD
             # Nettoyage spécifique au données solaires
             df = DataCleaner.clean_production_data(df, "solar")
 
-=======
-<<<<<<< HEAD
-        """
-        super().__init__(name, location, nominal_power)
-        self.data_file = data_file
-        self.data_handler = CSVDataHandler(data_file)
-
-    def load_production_data(self, start_date: date, end_date: date) -> pd.DataFrame:
-        """
-        Charge les données de production solaire entre deux dates.
-        """
-        try:
-            df = self.data_handler.load()
-
-=======
->>>>>>> f4c8067 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
-            # Nettoyage spécifique aux données de production solaire
-            # Nettoyage spécifique au données solaires
-            df = DataCleaner.clean_production_data(df, "solar")
-
-            # Filtrer par date
-<<<<<<< HEAD
->>>>>>> cbfd918 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
-=======
->>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
->>>>>>> f4c8067 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
             if "date" in df.columns:
                 df["date"] = pd.to_datetime(df["date"]).dt.date
                 filtered_df = df[(df["date"] >= start_date) & (df["date"] <= end_date)]
@@ -159,26 +50,13 @@ class SolarProducer(BaseProducer):
 
         except Exception as e:
             self.logger.error(
-<<<<<<< HEAD
                 f"Erreur lors du chargement des données de production solaire: {e}."
-=======
-                f"Erreur lors du chargement des données de production solaire: {e}"
-<<<<<<< HEAD
->>>>>>> cbfd918 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
-=======
->>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
-<<<<<<< HEAD
->>>>>>> f4c8067 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
-=======
-                f"Erreur lors du chargement des données de production solaire: {e}."
->>>>>>> bf9101c (refacto solar_producer)
             )
             return pd.DataFrame()
 
     def calculate_statistics(self, start_date: date, end_date: date) -> Dict[str, Any]:
         """
         Calcule des statistiques sur la production solaire pour une période donnée.
-<<<<<<< HEAD
 
         Args:
             start_date (date): Date de début
@@ -188,25 +66,6 @@ class SolarProducer(BaseProducer):
             Dict[str, Any]: Dictionnaire avec les statistiques calculées
         """
 
-=======
-        """
-<<<<<<< HEAD
->>>>>>> cbfd918 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
-=======
->>>>>>> 0889286 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
-<<<<<<< HEAD
->>>>>>> f4c8067 (Refacto de tout le code existant pour harmonisation et que tout soit fonctionnel)
-=======
-
-        Args:
-            start_date (date): Date de début
-            end_date (date): Date de fin
-
-        Returns:
-            Dict[str, Any]: Dictionnaire avec les statistiques calculées
-        """
-
->>>>>>> bf9101c (refacto solar_producer)
         df = self.load_production_data(start_date, end_date)
 
         if df.empty or "production_kwh" not in df.columns:
