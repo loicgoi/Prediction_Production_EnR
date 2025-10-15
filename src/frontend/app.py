@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 import requests
 from datetime import date
 
@@ -14,7 +13,7 @@ st.set_page_config(
 
 st.title("Application de Prédiction de Production d'énergie renouvelable")
 st.markdown("""
-Notre super app de prédiction boostée par l'IA . 
+Notre super app de prédiction boostée par l'IA.  
 Sélectionnez un onglet pour interagir avec l'API.
 """)
 
@@ -54,37 +53,25 @@ elif page == "Status API":
         st.error(f"Impossible de contacter l'API : {e}")
 
 # =========================
-# Fonction pour afficher le tableau stylé
-# =========================
-def styled_table(df, value_col="Remarque"):
-    # On colorie ok en vert et no en rouge
-    def color_remark(val):
-        color = 'green' if val == "✔️" else 'red'
-        return f'color: {color}; font-weight: bold'
-
-    st.dataframe(df.style.applymap(color_remark, subset=[value_col]))
-
-# =========================
 # Fonction générique pour prédiction
 # =========================
-def make_prediction(endpoint_name):
+def make_prediction(endpoint_name: str):
     st.subheader(f"Prédiction {endpoint_name.capitalize()}")
+    
     pred_date = st.date_input("Sélectionnez une date", value=date.today())
+
     if st.button(f"Lancer la prédiction {endpoint_name}"):
-        payload = {"date": str(pred_date)}
         try:
+            # On envoie juste la date dans le body, l'API récupère les features météo automatiquement
+            payload = {"date": str(pred_date)}
             response = requests.post(f"{API_URL}/predict/{endpoint_name}", json=payload)
+
             if response.ok:
                 st.success(f"Prédiction {endpoint_name} reçue !")
-                
                 data = response.json()
-                
-                if isinstance(data, dict):
-                    df = pd.DataFrame([data])
-                    df['Remarque'] = df['status'].apply(lambda x: "✔️" if x.lower() == "ok" else "❌")
-                    styled_table(df[['model_name', 'prediction', 'Remarque']])
-                else:
-                    st.json(data)
+                st.write(f"**Type de production :** {data['producer_type']}")
+                st.write(f"**Prédiction (kWh) :** {data['prediction_kwh']}")
+                st.write(f"**Statut :** {data['status']}")
             else:
                 st.error(f"Erreur API : {response.text}")
         except Exception as e:
@@ -93,8 +80,35 @@ def make_prediction(endpoint_name):
 # =========================
 # Prédictions selon l'onglet
 # =========================
+# =========================
+# Prédictions selon l'onglet
+# =========================
 if page == "Prédiction Solaire":
-    make_prediction("solar")
+    st.subheader("Prédiction Solaire 🌞")
+    
+    pred_date = st.date_input("Sélectionnez une date", value=date.today())
+
+    if st.button("Lancer la prédiction solaire"):
+        try:
+            # On envoie juste la date dans le body, l'API récupère les features météo automatiquement
+            payload = {"date": str(pred_date)}
+            response = requests.post(f"{API_URL}/predict/solar", json=payload)
+
+            if response.ok:
+                data = response.json()
+                st.success(f"Prédiction solaire reçue !")
+                st.write(f"**Type de production :** {data['producer_type']}")
+                st.write(f"**Prédiction (kWh) :** {data['prediction_kwh']}")
+                st.write(f"**Statut :** {data['status']}")
+            else:
+                # Si l'API renvoie un détail (comme pour missing fields)
+                try:
+                    st.error(f"Erreur API : {response.json()['detail']}")
+                except:
+                    st.error(f"Erreur API : {response.text}")
+        except Exception as e:
+            st.error(f"Erreur de connexion : {e}")
+
 elif page == "Prédiction Éolienne":
     make_prediction("wind")
 elif page == "Prédiction Hydro":
@@ -109,9 +123,9 @@ elif page == "Status des Modèles":
         response = requests.get(f"{API_URL}/models/status")
         if response.ok:
             data = response.json()
-            df = pd.DataFrame(data)
-            df['Remarque'] = df['status'].apply(lambda x: "✔️" if x.lower() == "ok" else "❌")
-            styled_table(df[['model_name', 'Remarque']])
+            for model, info in data.items():
+                status = "✅ Chargé" if info.get("loaded") else "❌ Non chargé"
+                st.write(f"{model.capitalize()} : {status}")
         else:
             st.error("Erreur lors de la récupération du status des modèles")
     except Exception as e:

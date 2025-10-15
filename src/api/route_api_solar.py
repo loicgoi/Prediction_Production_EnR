@@ -1,66 +1,46 @@
-# solar_api.py
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-import logging
+from typing import List, Dict, Any
 from src.prediction.model_predictor import ModelPredictor
+import logging
 
-# ===============================
-# CONFIGURATION DU LOGGER
-# ===============================
+router = APIRouter()
 logger = logging.getLogger(__name__)
 
-# ===============================
-# INITIALISATION DU ROUTER
-# ===============================
-router = APIRouter(
-    prefix="/predict/solar",
-    tags=["solar"],
-    responses={404: {"description": "Not found"}},
-)
-
-# ===============================
-# MODELE DE DONNÉES PREDICTION
-# ===============================
-class SolarFeatures(BaseModel):
+# -------------------------------
+# Schéma Pydantic pour la requête
+# -------------------------------
+class SolarForecastFeatures(BaseModel):
+    date: str
     temperature_2m_mean: float
     shortwave_radiation_sum_kwh_m2: float
     sunshine_duration: float
     cloud_cover_mean: float
     relative_humidity_2m_mean: float
 
+class SolarPredictionRequest(BaseModel):
+    features: List[SolarForecastFeatures]
 
-class PredictionResponse(BaseModel):
-    producer_type: str
-    prediction_kwh: float
-    status: str
-
-
-# ===============================
-# ENDPOINT DE PREDICTION SOLAIRE
-# ===============================
-@router.post("/", response_model=PredictionResponse)
-async def predict_solar(features: SolarFeatures):
-    """Prédit la production solaire de la journée en kWh"""
+# -------------------------------
+# Endpoint de prédiction solaire
+# -------------------------------
+@router.post("/predict/solar")
+def predict_solar(request: SolarPredictionRequest):
     try:
-<<<<<<< HEAD
-        logger.info(f"Prédiction solaire avec features: {features.model_dump()}")
+        features_list = [f.dict() for f in request.features]
+        logger.info(f"Prédiction solaire pour {len(features_list)} entrées")
 
-        predictor = ModelPredictor("solar")
-        prediction = predictor.predict(features.model_dump())
-        
-=======
-        logger.info(f"Prédiction solaire avec features: {features.dict()}")
+        predictor = ModelPredictor(model_name="solar_model.pkl")  # ton modèle
+        predictions = predictor.predict(features_list)  # prédiction batch
 
-        predictor = ModelPredictor("solar")
-        prediction = predictor.predict(features.dict())
+        # Retourner la date + prédiction
+        results = [
+            {"date": f["date"], "predicted_solar_power": pred}
+            for f, pred in zip(features_list, predictions)
+        ]
 
->>>>>>> 8d91632 (feat(api): ajout route /solar pour prédiction solaire)
-        return PredictionResponse(
-            producer_type="solar",
-            prediction_kwh=round(prediction, 2),
-            status="success"
-        )
+        return {"predictions": results}
 
     except Exception as e:
         logger.error(f"Erreur prédiction solaire: {e}")
-        raise HTTPException(status_code=500, detail=f"Erreur de prédiction: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
