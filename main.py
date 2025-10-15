@@ -4,6 +4,7 @@ import sys
 import os
 import subprocess
 from datetime import datetime
+import time
 
 from src.data_ingestion.fetchers.fetch_all import fetch_all
 
@@ -79,12 +80,15 @@ def run_streamlit():
         # Crée un dossier logs si nécessaire
         os.makedirs("logs", exist_ok=True)
 
+        # Chemin vers l'app Streamlit
+        streamlit_app_path = os.path.join("src", "frontend", "app.py")
+
         # Lance Streamlit
         subprocess.Popen(
             [
                 "streamlit",
                 "run",
-                "src/frontend/app.py",
+                streamlit_app_path,
                 "--server.port=8500",
                 "--server.address=0.0.0.0",
                 "--logger.level=info",
@@ -131,6 +135,9 @@ def run_all():
     logging.info("Démarrage de l'application Streamlit...")
     run_streamlit()
 
+    # 5 Garder la session active
+    keep_alive()
+
     return True
 
 
@@ -143,7 +150,7 @@ def check_services():
 
         # Vérifier l'API
         try:
-            response = requests.get("http://localhost:8000/health", timeout=5)
+            response = requests.get("http://localhost:8000/status", timeout=5)
             api_status = "En ligne" if response.status_code == 200 else "Hors ligne"
         except:
             api_status = "Hors ligne"
@@ -203,6 +210,30 @@ def kill_existing_streamlit():
         logging.warning(
             "psutil non installé, impossible de vérifier les processus existants"
         )
+
+
+def keep_alive():
+    """Maintient le script actif pour garder les processus enfants vivants"""
+    try:
+        print("\n" + "=" * 60)
+        print("SYSTÈME EN FONCTIONNEMENT")
+        print("=" * 60)
+        print("API FastAPI: http://localhost:8000")
+        print("Documentation API: http://localhost:8000/docs")
+        print("Interface Streamlit: http://localhost:8500")
+        print("")
+        print("Appuyez sur Ctrl+C pour arrêter tous les services")
+        print("=" * 60)
+
+        # Boucle de maintien en vie
+        while True:
+            time.sleep(1)  # Maintenant c'est le module time, pas datetime.time
+
+    except KeyboardInterrupt:
+        print("\nArrêt du système...")
+        # Tuer les processus Streamlit existants
+        kill_existing_streamlit()
+        sys.exit(0)
 
 
 def main():
