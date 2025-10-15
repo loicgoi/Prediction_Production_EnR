@@ -17,8 +17,4 @@ def prepare_features_df(features: Dict[str, Any]) -> pd.DataFrame:
     """
     Prépare un DataFrame à partir des features
     """
-<<<<<<< HEAD
     return pd.DataFrame([features])
-=======
-    return pd.DataFrame([features])
->>>>>>> 0ece31b (feat(api): ajout route /solar pour prédiction solaire)
