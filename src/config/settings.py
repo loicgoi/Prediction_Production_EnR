@@ -17,7 +17,6 @@ class Settings(BaseSettings):
     montpellier_longitude: float = 3.8763
     hubeau_station: str = "Y321002101"
 
-
     # API
     api_host: str = "0.0.0.0"
     api_port: int = 8000
@@ -31,5 +30,6 @@ class Settings(BaseSettings):
     wind_nominal_power: float = 100.0  # kW
     hydro_nominal_power: float = 200.0  # kW
 
-    class Config:
-        env_file = ".env"
+
+# Instanciation unique
+settings = Settings()
