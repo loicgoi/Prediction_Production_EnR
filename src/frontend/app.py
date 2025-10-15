@@ -14,7 +14,7 @@ st.set_page_config(
 
 st.title("Application de Prédiction de Production d'énergie renouvelable")
 st.markdown("""
-Notre app de prédiction boostée par l'IA .  
+Notre super app de prédiction boostée par l'IA . 
 Sélectionnez un onglet pour interagir avec l'API.
 """)
 
@@ -54,6 +54,17 @@ elif page == "Status API":
         st.error(f"Impossible de contacter l'API : {e}")
 
 # =========================
+# Fonction pour afficher le tableau stylé
+# =========================
+def styled_table(df, value_col="Remarque"):
+    # On colorie ok en vert et no en rouge
+    def color_remark(val):
+        color = 'green' if val == "✔️" else 'red'
+        return f'color: {color}; font-weight: bold'
+
+    st.dataframe(df.style.applymap(color_remark, subset=[value_col]))
+
+# =========================
 # Fonction générique pour prédiction
 # =========================
 def make_prediction(endpoint_name):
@@ -68,12 +79,10 @@ def make_prediction(endpoint_name):
                 
                 data = response.json()
                 
-                # Transformer en DataFrame pour affichage clair
-                # Exemple attendu : {"model_name": "solar_ridge", "prediction": 123.45, "status": "OK"}
                 if isinstance(data, dict):
                     df = pd.DataFrame([data])
-                    df['Remarque'] = df['status'].apply(lambda x: "Yes" if x.lower() == "ok" else "No")
-                    st.table(df[['model_name', 'prediction', 'Remarque']])
+                    df['Remarque'] = df['status'].apply(lambda x: "✔️" if x.lower() == "ok" else "❌")
+                    styled_table(df[['model_name', 'prediction', 'Remarque']])
                 else:
                     st.json(data)
             else:
@@ -100,13 +109,9 @@ elif page == "Status des Modèles":
         response = requests.get(f"{API_URL}/models/status")
         if response.ok:
             data = response.json()
-            
-            # Transformer en DataFrame
-            # Exemple attendu : [{"model_name": "solar_ridge", "status": "OK"}, {"model_name": "wind_rf", "status": "KO"}]
             df = pd.DataFrame(data)
             df['Remarque'] = df['status'].apply(lambda x: "✔️" if x.lower() == "ok" else "❌")
-            
-            st.table(df[['model_name', 'Remarque']])
+            styled_table(df[['model_name', 'Remarque']])
         else:
             st.error("Erreur lors de la récupération du status des modèles")
     except Exception as e:
